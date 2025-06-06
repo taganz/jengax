@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Tests con Mocha y Chai (CDN)</title>
+
+  <!-- 1) Estilos de Mocha para que se vea la salida de tests -->
+  <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/mocha/mocha.min.css"
+  />
+
+  <style>
+    body {
+      font-family: sans-serif;
+      margin: 1rem;
+    }
+    #mocha {
+      margin-top: 1rem;
+    }
+  </style>
+</head>
+<body>
+  <h1>Ejemplo de Mocha + Chai vía CDN</h1>
+
+  <!-- Este contenedor mostrará el reporte de Mocha -->
+  <div id="mocha"></div>
+
+  <!-- 2) Bibliotecas: Mocha y Chai desde CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/mocha/mocha.min.js"></script>
+  <!-- versio  sense moduls-->
+  <script src="https://cdn.jsdelivr.net/npm/chai@4.3.7/chai.min.js"></script> 
+
+  <script>
+    // 3) Inicializa Mocha para el navegador
+    mocha.setup('bdd'); // Usaremos BDD (describe/it)
+  </script>
+
+  <!-- 4) Tu código a probar -->
+  <script src="jengax.js"></script>
+
+  <!-- 5) Tests -->
+   <script src="jengax.test.js"></script>
+  <script>
+    // 6) Ejecuta Mocha cuando la página haya cargado
+    window.onload = function () {
+      mocha.run();
+    };
+  </script>
+</body>
+</html>
