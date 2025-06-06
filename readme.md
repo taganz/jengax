@@ -3,6 +3,9 @@
 **Jengax** is a browser-based interactive block-stacking game inspired by construction logic puzzles.  
 Users can place vertical and horizontal rectangular pieces based on specific support rules.
 
+<div align="center">
+    <img src="assets/jengax1.png" alt="Gameplay preview" width="400">
+</div>
 ## 🎮 How to Play
 
 - **Left-click** to place a piece at the clicked position.
@@ -25,7 +28,7 @@ Users can place vertical and horizontal rectangular pieces based on specific sup
 ## 🌐 Live Demo
 
 You can play the game online here:  
-👉 [https://your-username.github.io/jengax/](https://your-username.github.io/jengax/)
+👉 [https://rdalmau.com/jengax/](https://rdalmau.com/jengax/)
 
-## 📁 Project Structure
+
 
