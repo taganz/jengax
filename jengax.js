@@ -1,4 +1,4 @@
-let piece_width = 10;
+let piece_width = 10; // 10 gran, 5 petit
 let piece_sizes = [1, 2, 3, 5, 8, 13];
 let ground_color;
 let ground_border = 1;
@@ -9,10 +9,11 @@ let groundY;
 let pieces = [];
 let click_points = [];
 let qHeld = false;
+let lastDeletedPiece = null;
 
 function setup() {
   console.log('setup');
-  createCanvas(800, 600);
+  createCanvas(800, 600);  // 800, 600
   rectMode(CENTER);
   ground_color = color(80);
   piece_color = color(150, 75, 0);
@@ -75,7 +76,20 @@ function drawAllClickPoints() {
   }
 }
 
+function getPieceUnderMouse() {
+  for (let i = pieces.length - 1; i >= 0; i--) {
+    let p = pieces[i];
+    let left = p.x - p.width / 2;
+    let right = p.x + p.width / 2;
+    let top = p.y - p.height / 2;
+    let bottom = p.y + p.height / 2;
 
+    if (mouseX >= left && mouseX <= right && mouseY >= top && mouseY <= bottom) {
+      return { piece: p, index: i };
+    }
+  }
+  return null;
+}
 function getHoveredPoint() {
   for (let pt of click_points) {
     let isNear = dist(mouseX, mouseY, pt.x, pt.y) < 6;
@@ -132,13 +146,27 @@ function keyReleased() {
   }
 }
 
-function mousePressed() {
 
+function mousePressed() {
   if (mouseButton === RIGHT) {
-    removeLastPiece();
+    const result = getPieceUnderMouse();
+    if (result) {
+      console.log("button right pressed on piece:", result.piece);
+      lastDeletedPiece = result.piece;
+      pieces.splice(result.index, 1);
+    } else {
+      lastDeletedPiece = null;
+      removeLastPiece(); // elimina la última pieza del array sin guardar
+    }
+    redraw();
     return false; // prevenir menú contextual
   }
 
+  const restored = restoreLastDeletedPiece();
+  if (restored) return;
+
+  // Si no se restauró la pieza eliminada, la invalidamos
+  lastDeletedPiece = null;
 
   let x = mouseX;
   let y = mouseY;
@@ -149,7 +177,7 @@ function mousePressed() {
   if (horizontal) {
     let centerX = (horizontal.left.x + horizontal.right.x) / 2;
     let topY = horizontal.left.y - horizontal.left.height / 2;
-    let width = abs(horizontal.right.x - horizontal.left.x) + 2*piece_width;
+    let width = abs(horizontal.right.x - horizontal.left.x) + 2 * piece_width;
     let height = piece_width;
 
     pieces.push({
@@ -160,18 +188,16 @@ function mousePressed() {
       horizontal: true
     });
     console.log('Horizontal piece added:', pieces[pieces.length - 1]);
-    redraw()
+    redraw();
     return;
   }
 
   let baseX = x;
   let baseY;
   let supportPiece = getHighestPieceBelow(x, y);
-  if (supportPiece) {
-    baseY = supportPiece.y - supportPiece.height / 2;
-  } else {
-    baseY = groundY - piece_width / 2;
-  }
+  baseY = supportPiece
+    ? supportPiece.y - supportPiece.height / 2
+    : groundY - piece_width / 2;
 
   let height_needed = baseY - y;
   let selected_size = getMinSizeToCover(Math.abs(height_needed));
@@ -186,7 +212,7 @@ function mousePressed() {
     horizontal: false
   });
   console.log('Vertical piece added:', pieces[pieces.length - 1]);
-  redraw()
+  redraw();
 }
 
 function removeLastPiece() {
@@ -195,6 +221,33 @@ function removeLastPiece() {
     redraw(); // si estás usando noLoop()
   }
 }
+function removePieceUnderMouse() {
+  const result = getPieceUnderMouse();
+  if (result) {
+    lastDeletedPiece = result.piece;
+    pieces.splice(result.index, 1);
+    redraw();
+  }
+}
+function restoreLastDeletedPiece() {
+  if (!lastDeletedPiece) return false;
+
+  let p = lastDeletedPiece;
+  let left = p.x - p.width / 2;
+  let right = p.x + p.width / 2;
+  let top = p.y - p.height / 2;
+  let bottom = p.y + p.height / 2;
+
+  if (mouseX >= left && mouseX <= right && mouseY >= top && mouseY <= bottom) {
+    pieces.push(p);
+    lastDeletedPiece = null;
+    redraw();
+    return true;
+  }
+
+  return false;
+}
+
 
 function getHighestPieceBelow(x, y) {
   let best = null;
