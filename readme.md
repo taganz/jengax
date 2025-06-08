@@ -4,7 +4,7 @@
 Users can place vertical and horizontal rectangular pieces based on specific support rules.
 
 <div align="center">
-    <img src="assets/jengax1.png" alt="Gameplay preview" width="400">
+    <img src="assets/readme.png" alt="Gameplay preview" width="400">
 </div>
 ## 🎮 How to Play
 

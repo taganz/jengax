@@ -1,127 +1,76 @@
-let piece_width = 10; // 10 gran, 5 petit
-let piece_sizes = [1, 2, 3, 5, 8, 13];
+// ─── Configuration ─────────────────────────────────────────────────────
+let piece_width    = 20;
+let piece_sizes    = [1, 2, 3, 5, 8, 13];
+let ground_border  = 1;
+let piece_border   = 1;
+const snapToGrid = true;
 let ground_color;
-let ground_border = 1;
 let piece_color;
-let piece_border = 1;
 
-let groundY;
-let pieces = [];
-let click_points = [];
-let qHeld = false;
+// ─── World & Camera State ──────────────────────────────────────────────
+let groundYWorld;
+let viewScale    = 1;
+let viewOffsetX  = 0;
+let viewOffsetY  = 0;
+
+// ─── Game State ─────────────────────────────────────────────────────────
+let pieces           = [];
+let click_points     = [];
 let lastDeletedPiece = null;
+let qHeld            = false;
 
+// ─── File I/O ────────────────────────────────────────────────────────────
+let fileInput;
+
+// ─── p5.js setup & draw ─────────────────────────────────────────────────
 function setup() {
-  console.log('setup');
-  createCanvas(800, 600);  // 800, 600
+  createCanvas(800, 600);
   rectMode(CENTER);
-  ground_color = color(80);
-  piece_color = color(150, 75, 0);
-  groundY = height - piece_width / 2;
-  noLoop()
 
-  // Prevenir menú contextual del navegador
-  canvas = document.querySelector('canvas');
-  canvas.addEventListener('contextmenu', (e) => e.preventDefault());
+  ground_color = color(80);
+  piece_color  = color(150, 75, 0);
+
+  groundYWorld = height / viewScale - piece_width / 2;
+
+  noLoop();
+
+  // Prevent right-click menu
+  let cnv = document.querySelector('canvas');
+  cnv.addEventListener('contextmenu', e => e.preventDefault());
+  // Prevent page scroll on canvas wheel
+  cnv.addEventListener('wheel', e => e.preventDefault());
+
+  // Hidden file input for “Load” (L)
+  fileInput = createFileInput(handleFile);
+  fileInput.hide();
 }
 
 function draw() {
-  console.log('draw');
   background(240);
-  drawGround();
-  for (let p of pieces) drawPiece(p);
-  drawAllClickPoints();
-  drawHoveredPointIfNeeded();
-  drawPositionIfkeyQPressed();
-  if (!qHeld) {
-    noLoop();
-  } 
+
+  // Camera transform
+  push();
+    translate(viewOffsetX, viewOffsetY);
+    scale(viewScale);
+
+    drawGround();
+    for (let p of pieces) drawPiece(p);
+    drawAllClickPoints();
+    drawHoveredPointIfNeeded();
+  pop();
+
+  drawPositionIfKeyQPressed();
+
+  if (!qHeld) noLoop();
 }
 
+// ─── Drawing Helpers ────────────────────────────────────────────────────
 function drawGround() {
   stroke(0);
   strokeWeight(ground_border);
   fill(ground_color);
-  rect(width / 2, groundY, width, piece_width);
-}
-
-function drawHoveredPointIfNeeded() {
-  let hover = getHoveredPoint();
-  if (hover) {
-    let label = `${int(hover.x)}, ${int(hover.y)}`;
-    drawTooltipAtCursor(label);
-  }
-}
-
-function drawPositionIfkeyQPressed() {
-  let isQPressed = keyIsDown(81); // tecla Q
-  if (isQPressed) {
-    let label = `${int(mouseX)}, ${int(mouseY)}`;
-    drawTooltipAtCursor(label);
-  }
-}
-
-function drawAllClickPoints() {
-  noStroke();
-  let count = Math.min(3, click_points.length);
-
-  for (let i = 0; i < count; i++) {
-    let pt = click_points[click_points.length - 1 - i];
-    let size = 6 - i * 2; // Tamaños: 6, 4, 2
-
-    // Colores: del negro al gris claro
-    let gray = 0 + i * 80; // 0, 80, 160
-    fill(gray);
-    ellipse(pt.x, pt.y, size, size);
-  }
-}
-
-function getPieceUnderMouse() {
-  for (let i = pieces.length - 1; i >= 0; i--) {
-    let p = pieces[i];
-    let left = p.x - p.width / 2;
-    let right = p.x + p.width / 2;
-    let top = p.y - p.height / 2;
-    let bottom = p.y + p.height / 2;
-
-    if (mouseX >= left && mouseX <= right && mouseY >= top && mouseY <= bottom) {
-      return { piece: p, index: i };
-    }
-  }
-  return null;
-}
-function getHoveredPoint() {
-  for (let pt of click_points) {
-    let isNear = dist(mouseX, mouseY, pt.x, pt.y) < 6;
-    if (isNear ) {
-      return pt;
-    }
-  }
-  return null;
-}
-
-function drawTooltipAtCursor(label) {
-  textSize(12);
-  let padding = 6;
-  let w = textWidth(label) + padding * 2;
-  let h = 20;
-  let tx = mouseX + 10;
-  let ty = mouseY - h - 5;
-
-  // Fondo de la etiqueta
-  push();
-  rectMode(CORNER);
-  fill(255);
-  stroke(0);
-  strokeWeight(1);
-  rect(tx, ty, w, h, 5);
-  pop();
-
-  // Texto
-  noStroke();
-  fill(0);
-  textAlign(LEFT, CENTER);
-  text(label, tx + padding, ty + h / 2);
+  // ground spans entire width in world coords
+  rect((width/viewScale)/2, groundYWorld, width/viewScale, piece_width);
 }
 
 
@@ -132,95 +81,177 @@ function drawPiece(p) {
   rect(p.x, p.y, p.width, p.height);
 }
 
-function keyPressed() {
-  if (key === 'q' || key === 'Q') {
-    qHeld = true;
-    loop();
+
+
+function drawHoveredPointIfNeeded() {
+  let hover = getHoveredPoint();
+  if (hover) {
+    let label = `${int(hover.x)}, ${int(hover.y)}`;
+    drawTooltipAtCursor(label);
   }
 }
 
+function drawPositionIfKeyQPressed() {
+  if (qHeld) {
+    let wx = screenToWorldX(mouseX), wy = screenToWorldY(mouseY);
+    let label = `${int(wx)}, ${int(wy)}`;
+    drawTooltipAtCursor(label);
+  }
+}
+
+function drawAllClickPoints() {
+  noStroke();
+  let count = min(3, click_points.length);
+  for (let i = 0; i < count; i++) {
+    let pt   = click_points[click_points.length - 1 - i];
+    let size = 6 - i * 2;
+    let gray = i * 80;
+    fill(gray);
+    ellipse(pt.x, pt.y, size, size);
+  }
+}
+
+
+
+function getHoveredPoint() {
+  let wx = screenToWorldX(mouseX), wy = screenToWorldY(mouseY);
+  for (let pt of click_points) {
+    if (dist(wx, wy, pt.x, pt.y) < 6/viewScale) return pt;
+  }
+  return null;
+}
+
+function drawTooltipAtCursor(label) {
+  textSize(12);
+  let pad = 6, h = 20;
+  let w  = textWidth(label) + pad*2;
+  let tx = mouseX + 10, ty = mouseY - h - 5;
+
+  push();
+    rectMode(CORNER);
+    fill(255);
+    stroke(0);
+    strokeWeight(1);
+    rect(tx, ty, w, h, 5);
+  pop();
+
+  noStroke();
+  fill(0);
+  textAlign(LEFT, CENTER);
+  text(label, tx + pad, ty + h/2);
+}
+
+function keyPressed() {
+  // Save state
+  if (key === 'S' || key === 's') {
+    let state = {
+      canvasWidth:  width,
+      canvasHeight: height,
+      viewScale,
+      viewOffsetX,
+      viewOffsetY,
+      pieces,
+      click_points
+    };
+    saveJSON(state, 'jengax-save.json');
+    return;
+  }
+  // Load state
+  if (key === 'L' || key === 'l') {
+    fileInput.elt.click();
+    return;
+  }
+  // Q for tooltip
+  if (key === 'Q' || key === 'q') {
+    qHeld = true;
+    loop();
+  }
+  // Arrow keys for pan
+  if (keyCode === LEFT_ARROW)  { viewOffsetX += 20; redraw(); }
+  if (keyCode === RIGHT_ARROW) { viewOffsetX -= 20; redraw(); }
+  if (keyCode === UP_ARROW)    { viewOffsetY += 20; redraw(); }
+  if (keyCode === DOWN_ARROW)  { viewOffsetY -= 20; redraw(); }
+}
+
+
 function keyReleased() {
-  if (key === 'q' || key === 'Q') {
+  if (key === 'Q' || key === 'q') {
     qHeld = false;
     loop();
   }
 }
 
-
 function mousePressed() {
+  
+  let wx = screenToWorldX(mouseX),
+      wy = screenToWorldY(mouseY);
+
+  // 2) snap to grid en X
+ if (snapToGrid) {
+   wx = Math.round(wx / piece_width) * piece_width;
+ }
+
   if (mouseButton === RIGHT) {
-    const result = getPieceUnderMouse();
+    const result = getPieceUnderWorld(wx, wy);
     if (result) {
-      console.log("button right pressed on piece:", result.piece);
       lastDeletedPiece = result.piece;
       pieces.splice(result.index, 1);
     } else {
       lastDeletedPiece = null;
-      removeLastPiece(); // elimina la última pieza del array sin guardar
+      removeLastPiece();
     }
     redraw();
-    return false; // prevenir menú contextual
+    return false;
   }
 
-  const restored = restoreLastDeletedPiece();
-  if (restored) return;
-
-  // Si no se restauró la pieza eliminada, la invalidamos
+  if (restoreLastDeletedPiece(wx, wy)) return;
   lastDeletedPiece = null;
 
-  let x = mouseX;
-  let y = mouseY;
+  click_points.push({ x: wx, y: wy });
 
-  click_points.push({ x, y });
-
-  let horizontal = getHorizontalSupport(x, y);
+  let horizontal = getHorizontalSupport(wx, wy);
   if (horizontal) {
-    let centerX = (horizontal.left.x + horizontal.right.x) / 2;
-    let topY = horizontal.left.y - horizontal.left.height / 2;
-    let width = abs(horizontal.right.x - horizontal.left.x) + 2 * piece_width;
-    let height = piece_width;
-
-    pieces.push({
-      x: centerX,
-      y: topY - height / 2,
-      width,
-      height,
-      horizontal: true
-    });
-    console.log('Horizontal piece added:', pieces[pieces.length - 1]);
+    let cX = (horizontal.left.x + horizontal.right.x)/2;
+    let tY = horizontal.left.y - horizontal.left.height/2;
+    let w  = abs(horizontal.right.x - horizontal.left.x) + 2*piece_width;
+    let h  = piece_width;
+    pieces.push({ x: cX, y: tY - h/2, width: w, height: h, horizontal: true });
     redraw();
     return;
   }
 
-  let baseX = x;
-  let baseY;
-  let supportPiece = getHighestPieceBelow(x, y);
-  baseY = supportPiece
-    ? supportPiece.y - supportPiece.height / 2
-    : groundY - piece_width / 2;
+  let support = getHighestPieceBelow(wx, wy);
+  let baseY   = support
+                ? support.y - support.height/2
+                : groundYWorld - piece_width/2;
 
-  let height_needed = baseY - y;
-  let selected_size = getMinSizeToCover(Math.abs(height_needed));
-  let piece_height = selected_size * piece_width;
-  let centerY = baseY - piece_height / 2;
-
-  pieces.push({
-    x: baseX,
-    y: centerY,
-    width: piece_width,
-    height: piece_height,
-    horizontal: false
-  });
-  console.log('Vertical piece added:', pieces[pieces.length - 1]);
+  let needed = baseY - wy;
+  let size   = getMinSizeToCover(abs(needed));
+  let pH     = size * piece_width;
+  let cY     = baseY - pH/2;
+  pieces.push({ x: wx, y: cY, width: piece_width, height: pH, horizontal: false });
   redraw();
 }
 
-function removeLastPiece() {
-  if (pieces.length > 0) {
-    pieces.pop();
-    redraw(); // si estás usando noLoop()
-  }
+// zoom bajo el cursor
+function mouseWheel(event) {
+  let factor = event.deltaY < 0 ? 1.1 : 0.9;
+
+  // punto world antes de zoom
+  let wx = screenToWorldX(mouseX),
+      wy = screenToWorldY(mouseY);
+
+  // actualiza escala
+  viewScale *= factor;
+
+  // recalc offset para mantener (wx,wy) bajo el cursor
+  viewOffsetX = mouseX - wx * viewScale;
+  viewOffsetY = mouseY - wy * viewScale;
+
+  redraw();
+  return false;
 }
+
 function removePieceUnderMouse() {
   const result = getPieceUnderMouse();
   if (result) {
@@ -228,24 +259,6 @@ function removePieceUnderMouse() {
     pieces.splice(result.index, 1);
     redraw();
   }
-}
-function restoreLastDeletedPiece() {
-  if (!lastDeletedPiece) return false;
-
-  let p = lastDeletedPiece;
-  let left = p.x - p.width / 2;
-  let right = p.x + p.width / 2;
-  let top = p.y - p.height / 2;
-  let bottom = p.y + p.height / 2;
-
-  if (mouseX >= left && mouseX <= right && mouseY >= top && mouseY <= bottom) {
-    pieces.push(p);
-    lastDeletedPiece = null;
-    redraw();
-    return true;
-  }
-
-  return false;
 }
 
 
@@ -346,4 +359,81 @@ function getMinSizeToCover(dist) {
   return piece_sizes[piece_sizes.length - 1];
 }
 
+
+// ─── Save/Load Callbacks ────────────────────────────────────────────────
+function handleFile(file) {
+  if (file.subtype !== 'json') return;
+  // 1. Preguntar al usuario
+  const confirmText = 'Do you want to replace the current drawing?';
+  if (!window.confirm(confirmText)) {
+    // Si cancela, limpiar el input para poder recargar el mismo fichero luego
+    fileInput.elt.value = null;
+    return;
+  }
+  let data = file.data;
+  // resize canvas
+  resizeCanvas(data.canvasWidth, data.canvasHeight);
+  // restore camera
+  viewScale    = data.viewScale;
+  viewOffsetX  = data.viewOffsetX;
+  viewOffsetY  = data.viewOffsetY;
+  // restore world state
+  pieces       = data.pieces;
+  click_points = data.click_points;
+  // recompute ground
+  groundYWorld = height / viewScale - piece_width/2;
+  
+  redraw();
+  // Reset the fileInput so you can load *the same* file again
+  fileInput.elt.value = null;
+}
+
+// ─── Utility Functions ──────────────────────────────────────────────────
+function removeLastPiece() {
+  if (pieces.length > 0) {
+    pieces.pop();
+    redraw();
+  }
+}
+
+
+
+function getPieceUnderWorld(wx, wy) {
+  for (let i = pieces.length-1; i >= 0; i--) {
+    let p = pieces[i];
+    let l = p.x - p.width/2,
+        r = p.x + p.width/2,
+        t = p.y - p.height/2,
+        b = p.y + p.height/2;
+    if (wx >= l && wx <= r && wy >= t && wy <= b) {
+      return { piece: p, index: i };
+    }
+  }
+  return null;
+}
+
+function restoreLastDeletedPiece(wx, wy) {
+  if (!lastDeletedPiece) return false;
+  let p = lastDeletedPiece;
+  let l = p.x - p.width/2,
+      r = p.x + p.width/2,
+      t = p.y - p.height/2,
+      b = p.y + p.height/2;
+  if (wx >= l && wx <= r && wy >= t && wy <= b) {
+    pieces.push(p);
+    lastDeletedPiece = null;
+    redraw();
+    return true;
+  }
+  return false;
+}
+
+
+// ─── Camera & Coordinate Helpers ────────────────────────────────────────
+function screenToWorldX(sx) {
+  return (sx - viewOffsetX) / viewScale;
+}
+function screenToWorldY(sy) {
+  return (sy - viewOffsetY) / viewScale;
+}
 
