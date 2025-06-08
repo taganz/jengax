@@ -4,15 +4,16 @@ let piece_sizes    = [1, 2, 3, 5, 8, 13];
 let ground_border  = 1;
 let piece_border   = 1;
 const snapToGrid = true;
-let ground_color;
-let piece_color;
+const ground_color     = '#505050';
+const piece_color      = '#964B00';
+const background_color = '#F0F0F0';
 
 // ─── World & Camera State ──────────────────────────────────────────────
-let groundYWorld;
 let viewScale    = 1;
 let viewOffsetX  = 0;
 let viewOffsetY  = 0;
-
+let worldMinX;
+let worldMinY;
 // ─── Game State ─────────────────────────────────────────────────────────
 let pieces           = [];
 let click_points     = [];
@@ -26,17 +27,15 @@ let fileInput;
 function setup() {
   createCanvas(800, 600);
   rectMode(CENTER);
-
-  ground_color = color(80);
-  piece_color  = color(150, 75, 0);
-
-  groundYWorld = height / viewScale - piece_width / 2;
-
   noLoop();
+
+  let worldMinX = width /2 / viewScale;   // --> SERIA / O *?
+  let worldMinY = height /2 / viewScale;  // --> SERIA / O *?
 
   // Prevent right-click menu
   let cnv = document.querySelector('canvas');
   cnv.addEventListener('contextmenu', e => e.preventDefault());
+
   // Prevent page scroll on canvas wheel
   cnv.addEventListener('wheel', e => e.preventDefault());
 
@@ -46,17 +45,34 @@ function setup() {
 }
 
 function draw() {
-  background(240);
+  background(background_color);
 
+  // compute ground Y in screen coords:
+  let groundYScreen = viewOffsetY + height;
+  /*
+  rectMode(CORNER);
+  rect(
+    0,                      // x
+    groundYScreen,          // y
+    width,                 // w
+    height - groundYScreen // h (fills from ground down)
+  );
+  */
   // Camera transform
   push();
-    translate(viewOffsetX, viewOffsetY);
-    scale(viewScale);
+    // 1) lleva el origen pantalla a la línea del suelo:
+    //    — suelo en pantalla está en bottom, o puedes usar viewOffsetY
+    translate(viewOffsetX, viewOffsetY + height);
+    // 2) escala X y Y, pero en Y pon un - para invertir:
+    scale(viewScale, -viewScale);
 
-    drawGround();
-    for (let p of pieces) drawPiece(p);
+    // ahora en world‐space:
+    //   (0,0) → suelo
+    //   Y positivo → hacia arriba
+    drawGround();           // dibuja un suelo en y=0
+    pieces.forEach(drawPiece);
     drawAllClickPoints();
-    drawHoveredPointIfNeeded();
+    //drawHoveredPointIfNeeded();
   pop();
 
   drawPositionIfKeyQPressed();
@@ -70,9 +86,11 @@ function drawGround() {
   strokeWeight(ground_border);
   fill(ground_color);
   // ground spans entire width in world coords
-  rect((width/viewScale)/2, groundYWorld, width/viewScale, piece_width);
+  // Un rect que en world va de X=0 hasta canvasWidth/viewScale,
+  // y en Y de y=0 hacia “abajo” en world (que tras el -scale queda hacia pantalla → abajo)
+  ({ worldMinX, worldMaxX } = getWorldXBounds());
+  rect(width/2, 0, width/viewScale, -piece_width);
 }
-
 
 function drawPiece(p) {
   stroke(0);
@@ -81,8 +99,7 @@ function drawPiece(p) {
   rect(p.x, p.y, p.width, p.height);
 }
 
-
-
+/*
 function drawHoveredPointIfNeeded() {
   let hover = getHoveredPoint();
   if (hover) {
@@ -90,7 +107,7 @@ function drawHoveredPointIfNeeded() {
     drawTooltipAtCursor(label);
   }
 }
-
+*/
 function drawPositionIfKeyQPressed() {
   if (qHeld) {
     let wx = screenToWorldX(mouseX), wy = screenToWorldY(mouseY);
@@ -140,6 +157,8 @@ function drawTooltipAtCursor(label) {
   textAlign(LEFT, CENTER);
   text(label, tx + pad, ty + h/2);
 }
+
+// ─── User input ────────────────────────────────────────────────
 
 function keyPressed() {
   // Save state
@@ -191,6 +210,7 @@ function mousePressed() {
    wx = Math.round(wx / piece_width) * piece_width;
  }
 
+ // borrar piezas
   if (mouseButton === RIGHT) {
     const result = getPieceUnderWorld(wx, wy);
     if (result) {
@@ -210,12 +230,14 @@ function mousePressed() {
   click_points.push({ x: wx, y: wy });
 
   let horizontal = getHorizontalSupport(wx, wy);
+
+  // Si hay soporte horizontal, dibuja una pieza horizontal
   if (horizontal) {
-    let cX = (horizontal.left.x + horizontal.right.x)/2;
-    let tY = horizontal.left.y - horizontal.left.height/2;
+    let cX = (horizontal.left.x + horizontal.right.x)/2;   // centro entre los dos soportes 
+    let tY = horizontal.left.y + horizontal.left.height/2;  // top Y de los soportes
     let w  = abs(horizontal.right.x - horizontal.left.x) + 2*piece_width;
     let h  = piece_width;
-    pieces.push({ x: cX, y: tY - h/2, width: w, height: h, horizontal: true });
+    pieces.push({ x: cX, y: tY + h/2, width: w, height: h, horizontal: true });
     redraw();
     return;
   }
@@ -223,18 +245,35 @@ function mousePressed() {
   let support = getHighestPieceBelow(wx, wy);
   let baseY   = support
                 ? support.y - support.height/2
-                : groundYWorld - piece_width/2;
+                : 0;
 
   let needed = baseY - wy;
   let size   = getMinSizeToCover(abs(needed));
   let pH     = size * piece_width;
-  let cY     = baseY - pH/2;
+  let cY     = baseY + pH/2;
   pieces.push({ x: wx, y: cY, width: piece_width, height: pH, horizontal: false });
   redraw();
 }
 
 // zoom bajo el cursor
 function mouseWheel(event) {
+  let factor = event.deltaY < 0 ? 1.1 : 0.9;
+
+  // punto world antes de zoom
+  let wx = screenToWorldX(mouseX),
+      wy = screenToWorldY(mouseY);
+
+  // actualiza escala
+  viewScale *= factor;
+
+  // recalc offset para mantener (wx,wy) bajo el cursor
+  viewOffsetX = mouseX - wx * viewScale;
+ // viewOffsetY = mouseY - wy * viewScale;
+
+  redraw();
+  return false;
+}
+function mouseWheel_OLD(event) {
   let factor = event.deltaY < 0 ? 1.1 : 0.9;
 
   // punto world antes de zoom
@@ -264,19 +303,21 @@ function removePieceUnderMouse() {
 
 function getHighestPieceBelow(x, y) {
   let best = null;
-  let bestTopY = Infinity;
+  let bestTop = -Infinity;
 
   for (let p of pieces) {
-    let top = p.y - p.height / 2;
-    let bottom = p.y + p.height / 2;
-    let left = p.x - p.width / 2;
-    let right = p.x + p.width / 2;
+    let top    = p.y + p.height/2;   // world‐Y of the piece’s top
+    let bottom = p.y - p.height/2;   // world‐Y of its bottom
+    let left   = p.x - p.width/2;
+    let right  = p.x + p.width/2;
 
-    // Alineado en X y el punto está justo por encima o dentro del alto de la pieza
-    if (x >= left && x <= right && bottom >= y) {
-      if (top < bestTopY) {
-        bestTopY = top;
-        best = p;
+    // 1) must be horizontally under the click
+    // 2) the piece’s bottom must lie at or below the click
+    if (x >= left && x <= right && bottom <= y) {
+      // 3) pick the piece whose top is highest (largest Y)
+      if (top > bestTop) {
+        bestTop = top;
+        best    = p;
       }
     }
   }
@@ -288,20 +329,20 @@ function getHorizontalSupport(x, y) {
   let max_dist = piece_width * piece_sizes[piece_sizes.length - 1];
   let left_support = null;
   let right_support = null;
-  let bestTopLeft = Infinity;
-  let bestTopRight = Infinity;
+  let bestTopLeft = -Infinity;
+  let bestTopRight = -Infinity;
 
   for (let p of pieces) {
-    let top = p.y - p.height / 2;
+    let top = p.y + p.height / 2;
     let left = p.x - p.width / 2;
     let right = p.x + p.width / 2;
 
     // Ignorar si el top está por encima del punto clicado
-    if (top < y) continue;
+    if (top > y) continue;
 
     // Piezas suficientemente cerca a la izquierda
     if (right < x && Math.abs(p.x - x) <= max_dist) {
-      if (top < bestTopLeft) {
+      if (top > bestTopLeft) {
         bestTopLeft = top;
         left_support = p;
       }
@@ -309,7 +350,7 @@ function getHorizontalSupport(x, y) {
 
     // Piezas suficientemente cerca a la derecha
     if (left > x && Math.abs(p.x - x) <= max_dist) {
-      if (top < bestTopRight) {
+      if (top > bestTopRight) {
         bestTopRight = top;
         right_support = p;
       }
@@ -327,13 +368,13 @@ function getHorizontalSupport(x, y) {
     for (let p of pieces) {
       if (!p.horizontal) continue;
 
-      let top = p.y - p.height / 2;
-      let bottom = p.y + p.height / 2;
+      let top = p.y + p.height / 2;
+      let bottom = p.y - p.height / 2;
       let left = p.x - p.width / 2;
       let right = p.x + p.width / 2;
 
       if (
-        top < supportY && // está por encima del nivel de soporte
+        top > supportY && // está por encima del nivel de soporte
         x >= left && x <= right // se solapa con la posición del clic
       ) {
         return null; // ❌ No hay soporte válido si hay interferencia encima
@@ -349,8 +390,6 @@ function getHorizontalSupport(x, y) {
 
   return null;
 }
-
-
 
 function getMinSizeToCover(dist) {
   for (let s of piece_sizes) {
@@ -380,8 +419,6 @@ function handleFile(file) {
   // restore world state
   pieces       = data.pieces;
   click_points = data.click_points;
-  // recompute ground
-  groundYWorld = height / viewScale - piece_width/2;
   
   redraw();
   // Reset the fileInput so you can load *the same* file again
@@ -395,8 +432,6 @@ function removeLastPiece() {
     redraw();
   }
 }
-
-
 
 function getPieceUnderWorld(wx, wy) {
   for (let i = pieces.length-1; i >= 0; i--) {
@@ -428,12 +463,36 @@ function restoreLastDeletedPiece(wx, wy) {
   return false;
 }
 
+function getWorldXBounds() {
+  if (pieces.length === 0) {
+    return { worldMinX: 0, worldMaxX: 0 };
+  }
+  worldMinX =  Infinity;
+  worldMaxX = -Infinity;
 
+  for (let p of pieces) {
+    // en mundo, la pieza ocupa desde (p.x - p.width/2) hasta (p.x + p.width/2)
+    const leftEdge  = p.x - p.width / 2;
+    const rightEdge = p.x + p.width / 2;
+
+    if (leftEdge  < worldMinX) worldMinX = leftEdge;
+    if (rightEdge > worldMaxX) worldMaxX = rightEdge;
+  }
+
+  return { worldMinX, worldMaxX };
+}
 // ─── Camera & Coordinate Helpers ────────────────────────────────────────
 function screenToWorldX(sx) {
   return (sx - viewOffsetX) / viewScale;
 }
 function screenToWorldY(sy) {
-  return (sy - viewOffsetY) / viewScale;
+  return ( (height + viewOffsetY) - sy ) / viewScale;
 }
 
+function worldToScreenX(wx) {
+  return wx * viewScale + viewOffsetX;
+}
+
+function worldToScreenY(wy) {
+  return (height + viewOffsetY) - wy * viewScale;
+}

@@ -9,9 +9,12 @@ Users can place vertical and horizontal rectangular pieces based on specific sup
 ## 🎮 How to Play
 
 - **Left-click** to place a piece at the clicked position.
-- **Right-click** to remove the last piece.
-- **Hover** over a recent point or **hold `Q`** to display its coordinates.
-- Only the **last 3 click points** are shown, decreasing in size and darkness.
+- **Right-click** to remove the last piece (or undo)
+- Mouse wheel Zoom in/out the canvas under the cursor
+- Arrow keys  Pan the canvas
+- Hold Q to show current mouse coordinates
+- S to save the current drawing to a JSON file
+- L to load a drawing from a JSON file
 
 ## 🧠 Game Rules
 
