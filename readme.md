@@ -9,7 +9,7 @@ Users can place vertical and horizontal rectangular pieces based on specific sup
 ## 🎮 How to Play
 
 - **Left-click** to place a piece at the clicked position.
-- **Right-click** to remove the last piece (or undo)
+- **Right-click** to remove a specific piece or undo last piece addition
 - Mouse wheel Zoom in/out the canvas under the cursor
 - Arrow keys  Pan the canvas
 - Hold Q to show current mouse coordinates
