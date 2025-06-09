@@ -1,6 +1,6 @@
 # Jengax  (work in progress)
 
-**Jengax** is a browser-based interactive block-stacking game inspired by construction logic puzzles.  
+**Jengax** is a browser-based interactive block-stacking sketch tool inspired by construction logic puzzles.  
 Users can place vertical and horizontal rectangular pieces based on specific support rules.
 
 <div align="center">
@@ -20,8 +20,6 @@ Users can place vertical and horizontal rectangular pieces based on specific sup
 
 - Vertical pieces rest on the ground or on the top of other pieces.
 - Horizontal pieces can only be placed if two supporting vertical pieces are aligned and close enough.
-- Horizontal pieces are slightly wider than the space between supports (extend by half a block on each side).
-- Interference (e.g., a piece blocking above) prevents horizontal placement.
 
 ## 🛠 Built With
 
