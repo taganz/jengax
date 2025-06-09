@@ -205,7 +205,7 @@ function mousePressed() {
   let wx = screenToWorldX(mouseX),
       wy = screenToWorldY(mouseY);
 
-  // 2) snap to grid en X
+  // snap to grid en X
  if (snapToGrid) {
    wx = Math.round(wx / piece_width) * piece_width;
  }
@@ -244,7 +244,7 @@ function mousePressed() {
 
   let support = getHighestPieceBelow(wx, wy);
   let baseY   = support
-                ? support.y - support.height/2
+                ? support.y + support.height/2
                 : 0;
 
   let needed = baseY - wy;
@@ -374,7 +374,7 @@ function getHorizontalSupport(x, y) {
       let right = p.x + p.width / 2;
 
       if (
-        top > supportY && // está por encima del nivel de soporte
+        Math.abs(bottom - supportY) < 1 && // evitar repetir piezas horizontales
         x >= left && x <= right // se solapa con la posición del clic
       ) {
         return null; // ❌ No hay soporte válido si hay interferencia encima
