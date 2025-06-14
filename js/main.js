@@ -2,7 +2,7 @@
 
 // main.js
 import { draw as p5draw }            from './rendering.js';
-import { mousePressed, mouseWheel }  from './input.js';
+import { mousePressed }  from './input.js';
 import { keyPressed, keyReleased, handleZoom }   from './input.js';
 import { handleFile }                from './io.js';
 
@@ -22,8 +22,8 @@ export function setup() {
   cnv.addEventListener('contextmenu', e => e.preventDefault());
 
   // Prevent page scroll on canvas wheel
-  cnv.addEventListener('wheel', e => e.preventDefault(), { passive: false });
-  //cnv.addEventListener('wheel', handleZoom, { passive: false });
+  //cnv.addEventListener('wheel', e => e.preventDefault(), { passive: false });
+  cnv.addEventListener('wheel', handleZoom, { passive: false });
 
   // Hidden file input for “Load” (L)
   fileInput = createFileInput(handleFile);
@@ -36,7 +36,7 @@ export function setup() {
 window.setup        = setup;
 window.draw         = p5draw;
 window.mousePressed = mousePressed;
-window.mouseWheel   = mouseWheel;
+//window.mouseWheel   = mouseWheel;
 window.keyPressed   = keyPressed;
 window.keyReleased  = keyReleased;
 

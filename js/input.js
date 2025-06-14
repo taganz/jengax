@@ -76,17 +76,6 @@ export function keyReleased() {
   if (key==='Q'||key==='q') { qHeld=false; loop(); }
 }
 
-
-// --> decidir amb quina em quedo d'aquestes dues funcions
-
-// zoom bajo el cursor
-export function mouseWheel(event) {
-  const factor = event.deltaY < 0 ? 1.1 : 0.9;
-  zoomAt(mouseX, mouseY, factor);
-  redraw(); 
-  return false;
-}
-
 export function handleZoom(event) {
   // 1) stop the page from scrolling
   event.preventDefault();
