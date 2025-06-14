@@ -39,7 +39,7 @@ let qHeld            = false;
 let fileInput;
 
 // ─── p5.js setup & draw ─────────────────────────────────────────────────
-function setup() {
+export function setup() {
   createCanvas(800, 600);
   rectMode(CENTER);
   noLoop();
@@ -59,7 +59,7 @@ function setup() {
   fileInput.hide();
 }
 
-function draw() {
+export function draw() {
   background(background_color);
 
   // compute ground Y in screen coords:
@@ -239,7 +239,10 @@ function mousePressed() {
     return false;
   }
 
-  if (restoreLastDeletedPiece(wx, wy)) return;
+  if (restoreLastDeletedPiece(wx, wy)) {
+    redraw();
+    return; 
+  }
   lastDeletedPiece = null;
 
   click_points.push({ x: wx, y: wy });
@@ -511,3 +514,13 @@ function worldToScreenX(wx) {
 function worldToScreenY(wy) {
   return (height + viewOffsetY) - wy * viewScale;
 }
+
+
+// p5js espera trobar els callbacks en window i ho posem com modul no ho troba
+window.setup        = setup;
+window.draw         = draw;
+window.mousePressed = mousePressed;
+window.mouseWheel   = mouseWheel;
+// --> no se qui fa servir aixo
+window.worldMaxX = () => worldMinX + width / viewScale;
+window.worldMinX = () => worldMinX;

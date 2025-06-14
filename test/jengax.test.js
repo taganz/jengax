@@ -3,13 +3,8 @@
 const expect  =  chai.expect
 
 // importar funciones para testing
-window.getMinSizeToCover = getMinSizeToCover;
-window.getHighestPieceBelow = getHighestPieceBelow;
-window.getHorizontalSupport = getHorizontalSupport;
-window.screenToWorldX = screenToWorldX;
-window.screenToWorldY = screenToWorldY;
-window.worldToScreenX = worldToScreenX;
-window.worldToScreenY = worldToScreenY; 
+import { getMinSizeToCover } from '../js/utils.js';
+import { screenToWorldX, screenToWorldY, worldToScreenX, worldToScreenY } from '../js/camera.js'; 
 
 describe('tenga2 - funciones básicas', function () {
   beforeEach(function () {
@@ -271,3 +266,5 @@ describe('Screen ↔ World conversions with viewScale = 2', () => {
     expect(screenToWorldY(sy)).to.be.closeTo(wy, 1e-6);
   });
 });
+
+
