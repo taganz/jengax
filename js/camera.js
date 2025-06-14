@@ -3,6 +3,12 @@ export let viewScale = 1;
 export let viewOffsetX = 0;
 export let viewOffsetY = 0;
 
+
+export function setCamera(scale, offsetX, offsetY) {
+  viewScale = scale;
+  viewOffsetX = offsetX;
+  viewOffsetY = offsetY;
+} 
 export function screenToWorldX(sx) {
   return (sx - viewOffsetX) / viewScale;
 }

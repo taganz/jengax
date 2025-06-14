@@ -1,10 +1,10 @@
 // io.js
 import { pieces } from './pieces.js';
 import { click_points } from './input.js';
-import { viewScale, viewOffsetX, viewOffsetY } from './camera.js';
-import { fileInput } from './main.js';
+import { viewScale, viewOffsetX, viewOffsetY, setCamera } from './camera.js';
+//import { fileInput } from './main.js';
 
-//export let fileInput;   --- no em deixa declarar aquí, ho fem a main.js
+let fileInput;  
 
 // in main setup because it is p5.js specific
 //export function initFileInput(handleFile) {
@@ -12,7 +12,14 @@ import { fileInput } from './main.js';
 //  fileInput.hide();
 //}
 
+export function setFileInput(input) {
+  fileInput = input;  
+  // Ensure the file input is hidden  
+  fileInput.hide();
+}
+
 export function handleSave() {
+
   const state = {
     canvasWidth: width,
     canvasHeight: height,
@@ -22,7 +29,15 @@ export function handleSave() {
     pieces,
     click_points 
   };
-  saveJSON(state, 'jengax-save.json');
+  let dayhour = makeSaveFilename();
+  let jsonfilename = `jengax-${dayhour}.json`;
+  let pngfilename = `jengax-${dayhour}`;
+
+  saveJSON(state, jsonfilename);
+  // 2) save the canvas as a PNG
+  //    the first arg can be a p5.Graphics or 'canvas' name, 
+  //    if omitted it uses the main canvas. 
+  saveCanvas(pngfilename, 'png');
 }
 
 export function handleLoad() {
@@ -40,12 +55,21 @@ export function handleFile(file) {
   }
   const data = file.data;
   resizeCanvas(data.canvasWidth, data.canvasHeight);
-  viewScale = data.viewScale;
-  viewOffsetX = data.viewOffsetX;
-  viewOffsetY = data.viewOffsetY;
+  setCamera(data.viewScale, data.viewOffsetX, data.viewOffsetY);
   pieces.splice(0, pieces.length, ...data.pieces);  // --> fer un setter i no exportar pieces[]
   click_points.splice(0, click_points.length, ...data.click_points);
   redraw();
   // Reset the fileInput so you can load *the same* file again
   fileInput.elt.value = null;
+}
+
+function makeSaveFilename() {
+  const now   = new Date();
+  const day   = String(now.getDate()).padStart(2, '0');
+  const hour    = String(now.getHours()).padStart(2, '0');
+  const minute  = String(now.getMinutes()).padStart(2, '0');
+
+  // e.g. "jengax-state-14-09-05.png" for day=14, hour=09, minute=05
+  return `${day}${hour}${minute}`;
+
 }

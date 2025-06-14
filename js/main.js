@@ -4,10 +4,9 @@
 import { draw as p5draw }            from './rendering.js';
 import { mousePressed }  from './input.js';
 import { keyPressed, keyReleased, handleZoom }   from './input.js';
-import { handleFile }                from './io.js';
+import { handleFile, setFileInput } from './io.js';
 
 export const snapToGrid = true;
-export let fileInput
 
 // ─── p5.js setup & draw ─────────────────────────────────────────────────
 export function setup() {
@@ -25,9 +24,10 @@ export function setup() {
   //cnv.addEventListener('wheel', e => e.preventDefault(), { passive: false });
   cnv.addEventListener('wheel', handleZoom, { passive: false });
 
-  // Hidden file input for “Load” (L)
-  fileInput = createFileInput(handleFile);
-  fileInput.hide();
+  // Hidden file input for “Load” (L). 
+  // It is created here because it is a p5.js specific function
+  setFileInput(createFileInput(handleFile));
+ 
 }
 
 // Bind p5’s globals
