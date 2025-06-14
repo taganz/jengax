@@ -1,10 +1,10 @@
 // input.js
 import { piece_width, 
       deletePiece,
-      getPieceUnderWorld,
+      getPieceIdUnderWorld,
       restoreLastDeletedPiece,
       removeLastPiece,
-      tryHorizontalPiece,
+      addHorizontalPieceIfPossible,
       drawVerticalPiece
       } from './pieces.js';
 import { zoomAt, pan } from './camera.js';
@@ -26,12 +26,14 @@ export function mousePressed() {
   // borrar piezas
   if (mouseButton === RIGHT) {
     // Si hay una pieza bajo el cursor, la borra
-    const res = getPieceUnderWorld(wx, wy);
-    if (res) { 
-      deletePiece(res.piece);
+    const index = getPieceIdUnderWorld(wx, wy);
+    if (index) { 
+      console.log('Borrando pieza id: ', index, ' at ', wx, wy);
+      deletePiece(index);
     }
     else {
       // si no borra la ultima dibujada
+      console.log(`Borrando ultima pieza dibujada at `);
       removeLastPiece(); 
     }
     redraw(); 
@@ -43,7 +45,7 @@ export function mousePressed() {
   }
   click_points.push({ x: wx, y: wy });
   
-  if (tryHorizontalPiece(wx, wy)) {
+  if (addHorizontalPieceIfPossible(wx, wy)) {
     redraw();
     return;
   }

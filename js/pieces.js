@@ -17,12 +17,12 @@ export function removeLastPiece() {
   if (pieces.length > 0) pieces.pop();
   redraw();
 }
-export function deletePiece(p) {
-  pieces.splice(p.index,1);
-  lastDeletedPiece = p;
+export function deletePiece(index) {
+  lastDeletedPiece = pieces[index];
+  pieces.splice(index,1);
 
 }
-export function getPieceUnderWorld(wx, wy) {
+export function getPieceIdUnderWorld(wx, wy) {
   for (let i = pieces.length - 1; i >= 0; i--) {
     const p = pieces[i];
     const left = p.x - p.width/2;
@@ -30,7 +30,7 @@ export function getPieceUnderWorld(wx, wy) {
     const top = p.y - p.height/2;
     const bottom = p.y + p.height/2;
     if (wx >= left && wx <= right && wy >= top && wy <= bottom) {
-      return { piece: p, index: i };
+      return  i; // devuelve el índice de la pieza
     }
   }
   return null;
@@ -120,7 +120,7 @@ export function getHorizontalSupport(x, y, piece_width, piece_sizes) {
   return null;
 }
 
-export function tryHorizontalPiece(wx, wy) {
+export function addHorizontalPieceIfPossible(wx, wy) {
   const horizontal = getHorizontalSupport(wx, wy, piece_width, piece_sizes);
   if (horizontal) {
     const cX = (horizontal.left.x + horizontal.right.x) / 2; // centro entre los dos soportes 
