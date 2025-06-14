@@ -13,14 +13,15 @@ const background_color = '#F0F0F0';
 
 export function draw() {
   background(background_color);
-  rectMode(CENTER);
+  rectMode(CENTER);  // 
   // Camera transform (viewScale, viewOffsetX, viewOffsetY)
   push();
     // 1) lleva el origen pantalla a la línea del suelo:
     //    — suelo en pantalla está en bottom, o puedes usar viewOffsetY
     translate(viewOffsetX, viewOffsetY + height);
-    // 2) escala X y Y, pero en Y pon un - para invertir:
+    // after scaling, origin is at bottom left of screen (plus offset), and Y is inverted
     scale(viewScale, -viewScale);
+    
 
     drawGround();          
     pieces.forEach(drawPiece);
@@ -39,15 +40,13 @@ export function drawGround() { //width, piece_width, ground_border, ground_color
   stroke(0); 
   strokeWeight(ground_border);
   fill(ground_color);
-  // ground spans entire width in world coords
-  // Un rect que en world va de X=0 hasta canvasWidth/viewScale,
-  // y en Y de y=0 hacia “abajo” en world (que tras el -scale queda hacia pantalla → abajo)
+  // ground spans entire world 
   let worldMinX, worldMaxX;
   ({ worldMinX, worldMaxX } = getWorldXBounds());
   let smin = min (screenToWorldX(-width/2), worldMinX); // left edge in screen coords
   let smax = max (screenToWorldX(width/2), worldMaxX); // right edge in screen coords 
   let groundWidth = smax - smin; // width in screen coords
-  rect(width/2+(smin+smax)/2, 0, groundWidth, piece_width);  
+  rect(width/2+(smin+smax)/2, 0, groundWidth, piece_width); 
   //console.log('canvas: ', width, height);
   //console.log(`World bounds: ${worldMinX}, ${worldMaxX}`);
   //console.log(`smin, smax, groundWidth: ${smin}, ${smax}, ${groundWidth}`);
