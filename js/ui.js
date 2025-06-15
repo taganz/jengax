@@ -13,6 +13,7 @@ const userInfo = document.getElementById("logged-user");
 
 export function initUI() {
 
+    // two UI modes: Gallery and Canvas
     setUIModeCanvas();
     
 
@@ -22,19 +23,12 @@ export function initUI() {
       try {
         await login();
         console.log("Usuario autenticado:", currentUser.displayName);
-        buttonLogin.classList.add("hidden");
-        buttonLogout.classList.remove("hidden");
-        buttonPublish.classList.remove("hidden");
-        userInfo.innerHTML = `
-           Logged as ${currentUser.displayName}  
-          `;
+        setLoginStateButtons();
       } catch (error) {
         console.error("Error al autenticar: ", error);
       }
     });
     
-
-
     buttonGallery.addEventListener("click", (e) => {
       //e.preventDefault();  // -->???
       
@@ -73,7 +67,8 @@ export function setUIModeGallery() {
   }
 export function setUIModeCanvas() {
     setLoginStateButtons();
-    gallery.classList.add("hidden");
+    gallery.style.display = "none";
+    //gallery.classList.add("hidden");
     buttonGallery.classList.remove("hidden");
     buttonCanvas.classList.add("hidden");
 }
@@ -136,7 +131,7 @@ export async function renderGallery() {
     img.addEventListener("click", async () => {
       const data = await loadSketchById(item.id);
       setSketchData(data);
-      container.style.display = "none";
+      gallery.style.display = "none";
     });
     itemDiv.appendChild(img);
 
