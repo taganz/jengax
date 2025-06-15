@@ -18,7 +18,6 @@ describe('tenga2 - funciones básicas', function () {
 
           let groundY;
           let pieces = [];
-          let click_points = [];
         */
       });
 

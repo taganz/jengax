@@ -13,7 +13,6 @@ import { snapToGrid } from './main.js';
 import { screenToWorldX, screenToWorldY } from './camera.js';
 import { logCursorPosition } from './utils.js';
 
-export let click_points     = [];
 
 export let qHeld;
 
@@ -51,7 +50,6 @@ export function mousePressed() {
     redraw();
     return;
   }
-  click_points.push({ x: wx, y: wy });
   
   if (addHorizontalPieceIfPossible(wx, wy)) {
     redraw();

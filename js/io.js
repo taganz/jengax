@@ -1,6 +1,5 @@
 // io.js
 import { pieces } from './pieces.js';
-import { click_points } from './input.js';
 import { viewScale, viewOffsetX, viewOffsetY, setCamera } from './camera.js';
 //import { fileInput } from './main.js';
 
@@ -26,8 +25,7 @@ export function handleSave() {
     viewScale,
     viewOffsetX,
     viewOffsetY,
-    pieces,
-    click_points 
+    pieces
   };
   let dayhour = makeSaveFilename();
   let jsonfilename = `jengax-${dayhour}.json`;
@@ -57,7 +55,6 @@ export function handleFile(file) {
   resizeCanvas(data.canvasWidth, data.canvasHeight);
   setCamera(data.viewScale, data.viewOffsetX, data.viewOffsetY);
   pieces.splice(0, pieces.length, ...data.pieces);  // --> fer un setter i no exportar pieces[]
-  click_points.splice(0, click_points.length, ...data.click_points);
   redraw();
   // Reset the fileInput so you can load *the same* file again
   fileInput.elt.value = null;
@@ -83,6 +80,5 @@ export function loadSketchFromGallery(data) {
     setCamera(1, 0, 0);
   }
   pieces.splice(0, pieces.length, ...data.pieces);  // --> fer un setter i no exportar pieces[]
-  //click_points.splice(0, click_points.length, ...data.click_points);
   redraw();
 }

@@ -1,6 +1,6 @@
 // rendering.js
 import { pieces, piece_width, piece_border, getWorldXBounds } from './pieces.js';
-import { click_points, qHeld } from './input.js';
+import { qHeld } from './input.js';
 import { screenToWorldX, screenToWorldY, worldToScreenX, worldToScreenY } from './camera.js';
 import { viewScale, viewOffsetX, viewOffsetY } from './camera.js';
 
@@ -25,7 +25,6 @@ export function draw() {
 
     drawGround();          
     pieces.forEach(drawPiece);
-    drawAllClickPoints();
     //drawHoveredPointIfNeeded();
   pop();
   
@@ -60,17 +59,7 @@ export function drawPiece(p) { //}, piece_border, piece_color) {
   rect(p.x, p.y, p.width, p.height);
 }
 
-export function drawAllClickPoints() {
-  noStroke();
-  const count = min(3, click_points.length);
-  for (let i = 0; i < count; i++) {
-    const pt = click_points[click_points.length - 1 - i];
-    const size = 6 - i*2;
-    const gray = i*80;
-    fill(gray);
-    ellipse(pt.x, pt.y, size, size);
-  }
-}
+
 
 export function drawTooltip(label, sx, sy) {
   textSize(12);
