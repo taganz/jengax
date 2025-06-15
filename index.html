@@ -3,7 +3,8 @@
   <title>Jengax – Interactive Canvas Sketching with Mouse & Keyboard</title>
 <meta name="description" content="Jengax is an interactive canvas sketching tool that allows you to create and manipulate structures with your mouse and keyboard.">
 <meta name="keywords" content="Jengax, interactive sketching, canvas drawing, mouse and keyboard, creative tool, web application, HTML5, JavaScript">
-  <!-- Google Analytics -->
+    <link rel="stylesheet" href="./main.css" />  
+<!-- Google Analytics -->
 <script>
   window.dataLayer = window.dataLayer || [];
   function gtag(){ dataLayer.push(arguments); }
@@ -23,15 +24,26 @@
   </style>
 </head>
 <body>
+
   <main>
-    <h1 style="text-align: center">JENGAX</h1>
-    <p style="text-align: center; font-family: sans-serif; font-size: 14px; margin-top: 10px;">
-      Sketch one click at a time.<br>
+    <!--h3 style="text-align: center">JENGAX. Sketch one click</h1-->
+    <p style="text-align: center; font-family: sans-serif; font-size: 8pxpx; margin-top: 10px;">
+      <strong>Jengax</strong>. Sketch one click at a time.<br>
+
+      <button id="button-login">Login with Google</button>
+      <button id="button-logout" class="hidden">Logout</button>
+      <button id="button-publish" class="hidden">Publish</button>
+      <button id="button-gallery">View gallery</button>
+       <div id="userInfo"></div>
+       <!-- Contenedor para la galeria inicialmente oculto -->
+      <div id="gallery" class="hidden"></div>
   </main>
 
 
-<script src="js/main.js" type="module" ></script>
+<!-- MAIN -->
+  <script src="js/main.js" type="module" ></script>
 
+  <!-- INSTRUCTIONS -->
 <div id="instructions" style="text-align: center;font-family: sans-serif; margin-top: 16px; line-height: 1.5;">
   <ul style="list-style: none; padding: 0;">
     

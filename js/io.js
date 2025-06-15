@@ -73,3 +73,16 @@ function makeSaveFilename() {
   return `${day}${hour}${minute}`;
 
 }
+
+export function loadSketchFromGallery(data) {
+  if (data.renderStatus) {
+    resizeCanvas(data.renderStatus.width, data.renderStatus.height);
+    setCamera(data.renderStatus.viewScale, data.renderStatus.viewOffsetX, data.renderStatus.viewOffsetY);
+  } else {
+    resizeCanvas(800, 600); 
+    setCamera(1, 0, 0);
+  }
+  pieces.splice(0, pieces.length, ...data.pieces);  // --> fer un setter i no exportar pieces[]
+  //click_points.splice(0, click_points.length, ...data.click_points);
+  redraw();
+}
