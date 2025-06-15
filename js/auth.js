@@ -3,9 +3,12 @@ import { auth } from "./firebase-config.js";
 import {
   GoogleAuthProvider,
   signInWithPopup,
-  signOut
+  signOut, 
+  onAuthStateChanged
 } from 'https://www.gstatic.com/firebasejs/11.9.1/firebase-auth.js'
 
+export let currentUser = null;
+export let currentUserId = null; // ID del usuario autenticado
 
 const provider = new GoogleAuthProvider();
 
@@ -13,9 +16,13 @@ const provider = new GoogleAuthProvider();
  
 export async function login() {
   try {
-    const response = await signInWithPopup(auth, provider);
-    return response.user;
-  } catch (error) {
+    let response = await signInWithPopup(auth, provider);
+    currentUser = response.user;
+    currentUserId = currentUser.uid; // Guardamos el ID del usuario autenticado
+    localStorage.setItem("user", JSON.stringify(currentUser));
+  } 
+  catch (error) 
+  {
     throw new Error(error);
   }
 }
@@ -23,3 +30,15 @@ export async function login() {
 export function logout() {
   signOut(auth);
 }
+
+onAuthStateChanged(auth, (user) => {
+  if (user) {
+    // User is signed in, see docs for a list of available properties
+    // https://firebase.google.com/docs/reference/js/firebase.User
+    currentUser = user;
+    currentUserId = user.uid;
+    //init(); // función que arranca tu app con el usuario logueado
+  } else {
+    // Usuario ha cerrado sesión o no está autenticado
+  }
+});

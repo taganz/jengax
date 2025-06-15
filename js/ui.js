@@ -1,55 +1,184 @@
 // ui.js
-import { fetchSketchList, loadSketchById } from "./firebase.js";
+import { fetchSketchList, loadSketchById, deleteSketch, saveSketch } from "./firebase.js";
 import { loadSketchFromGallery } from "./io.js";
+import { login, logout, currentUserId, currentUser } from "./auth.js";
+
+const buttonLogin = document.getElementById("button-login");
+const buttonLogout = document.getElementById("button-logout");
+const buttonPublish = document.getElementById("button-publish");
+const buttonGallery = document.getElementById("button-gallery");
+const buttonCanvas = document.getElementById("button-canvas");
+const gallery = document.getElementById("gallery");
+const userInfo = document.getElementById("logged-user");
+
+export function initUI() {
+
+    setUIModeCanvas();
+    
+
+    // Eventos de botones
+
+    buttonLogin.addEventListener("click", async (e) => {
+      try {
+        await login();
+        console.log("Usuario autenticado:", currentUser.displayName);
+        buttonLogin.classList.add("hidden");
+        buttonLogout.classList.remove("hidden");
+        buttonPublish.classList.remove("hidden");
+        userInfo.innerHTML = `
+           Logged as ${currentUser.displayName}  
+          `;
+      } catch (error) {
+        console.error("Error al autenticar: ", error);
+      }
+    });
+    
 
 
-export const buttonLogin = document.getElementById("button-login");
-export const buttonLogout = document.getElementById("button-logout");
-export const buttonPublish = document.getElementById("button-publish");
-export const buttonGallery = document.getElementById("button-gallery");
-export const gallery = document.getElementById("gallery");
+    buttonGallery.addEventListener("click", (e) => {
+      //e.preventDefault();  // -->???
+      
+      setUIModeGallery();
+      renderGallery();
+    });
 
+    buttonCanvas.addEventListener("click", (e) => {
+      setUIModeCanvas();  
+    });
+
+    buttonLogout.addEventListener("click", (e) => {
+      logout();
+      localStorage.removeItem("user");
+      buttonLogin.classList.remove("hidden");
+      buttonLogout.classList.add("hidden");
+      buttonPublish.classList.add("hidden");
+      userInfo.innerHTML = "";
+      console.log("Usuario desconectado");
+      currentUser = null;
+    });
+    
+
+    buttonPublish.addEventListener("click", (e) => {    
+     saveSketch();
+    });
+    
+}     
+
+// ---- Menu states --------------
+export function setUIModeGallery() {
+    setLoginStateButtons();
+    gallery.classList.remove("hidden");
+    buttonGallery.classList.add("hidden");
+    buttonCanvas.classList.remove("hidden");
+  }
+export function setUIModeCanvas() {
+    setLoginStateButtons();
+    gallery.classList.add("hidden");
+    buttonGallery.classList.remove("hidden");
+    buttonCanvas.classList.add("hidden");
+}
+
+function setLoginStateButtons() {
+    if (currentUser) {
+        buttonLogin.classList.add("hidden");
+        buttonLogout.classList.remove("hidden");
+        buttonPublish.classList.remove("hidden");
+        userInfo.innerHTML = `
+           <span>${currentUser.displayName}</span>
+          `;
+    } else {
+        buttonLogin.classList.remove("hidden");
+        buttonLogout.classList.add("hidden");
+        buttonPublish.classList.add("hidden");
+        userInfo.innerHTML = "";
+    }
+}
 
 /**
  * Pinta la lista de sketches en el div#gallery.
  */
 export async function renderGallery() {
-  const list = await fetchSketchList();
-  const container = document.getElementById("gallery");
-  container.innerHTML = ""; // limpia antes de pintar
   
+  //setUIModeGallery();
+
+  gallery.innerHTML = ""; // limpia antes de pintar
+  gallery.style.display = "grid";
+
+  const list = await fetchSketchList();
+
   if (list.length === 0) {
-    container.textContent = "No hay sketches guardados.";
+    gallery.textContent = "No sketches stored.";
     return;
   }
 
-  // crea un <ul> con un <li> por sketch
-  const ul = document.createElement("ul");
-  list.forEach(item => {
-    const li = document.createElement("li");
-    // formatea fecha
+
+   list.forEach(item => {
+    const itemDiv = document.createElement("div");
+    itemDiv.className = "gallery-item";
+
+    // Tooltip nativo con todos los detalles
     const fecha = item.createdAt
-      ? item.createdAt.toLocaleString()
+      ? item.createdAt.toLocaleDateString() 
       : "Fecha desconocida";
-    li.innerHTML = `
-      <strong>${item.sketchName}</strong>
-      <span>(${fecha})</span>
-      <em>por ${item.user}</em>
-    `;
-    li.style.cursor = "pointer";
-    // al hacer clic, carga y aplica el sketch
-    li.addEventListener("click", async () => {
-      try {
-        const data = await loadSketchById(item.id);
-        loadSketchFromGallery(data);
-        gallery.classList.add("hidden");  
-      } catch (e) {
-        console.error(e);
-        alert("Error al cargar el sketch.");
-        gallery.classList.add("hidden"); 
-      }
+    const hora = item.createdAt
+      ? item.createdAt.toLocaleTimeString() 
+      : "";
+    itemDiv.title = 
+      `Name: ${item.sketchName}\n` +
+      `Author: ${item.user}\n` +
+      `Upload: ${fecha}  ${hora}`;
+
+    // Imagen
+    const img = document.createElement("img");
+    img.src = item.sketchImage;
+    img.alt = item.sketchName;
+    // Al clicar imagen también carga el sketch
+    img.addEventListener("click", async () => {
+      const data = await loadSketchById(item.id);
+      setSketchData(data);
+      container.style.display = "none";
     });
-    ul.appendChild(li);
+    itemDiv.appendChild(img);
+
+    // Nombre bajo la imagen
+    const nameDiv = document.createElement("div");
+    nameDiv.textContent = item.sketchName;
+    nameDiv.style.marginTop = "4px";
+    nameDiv.style.fontWeight = "bold";
+    itemDiv.appendChild(nameDiv);
+
+    // Botones Load / Delete
+    const btnWrap = document.createElement("div");
+    btnWrap.className = "buttons";
+
+    const loadBtn = document.createElement("button");
+    loadBtn.textContent = "Load";
+    loadBtn.addEventListener("click", async (e) => {
+      e.stopPropagation();
+      const data = await loadSketchById(item.id);
+      loadSketchFromGallery(data);
+      gallery.style.display = "none";
+      setUIModeCanvas();
+    });
+    btnWrap.appendChild(loadBtn);
+
+    if (currentUserId && currentUserId === item.user) {
+      const delBtn = document.createElement("button");
+      delBtn.textContent = "Delete";
+      delBtn.addEventListener("click", async (e) => {
+        e.stopPropagation();
+        const msg = `Are you sure you want to delete the sketch:\n"${item.sketchName}"?\n\n` +
+            `This action is irreversible.`
+        if (confirm(msg)) {
+          await deleteSketch(item.id);
+          // refresca la galería
+          renderGallery();
+        }
+      });
+      btnWrap.appendChild(delBtn);
+    }
+
+    itemDiv.appendChild(btnWrap);
+    gallery.appendChild(itemDiv);
   });
-  container.appendChild(ul);
 }

@@ -35,12 +35,12 @@ export function mousePressed() {
     // Si hay una pieza bajo el cursor, la borra
     const index = getPieceIdUnderWorld(wx, wy);
     if (index) { 
-      console.log('Borrando pieza id: ', index, ' at ', wx, wy);
+      //console.log('Borrando pieza id: ', index, ' at ', wx, wy);
       deletePiece(index);
     }
     else {
       // si no borra la ultima dibujada
-      console.log(`Borrando ultima pieza dibujada at `);
+      //console.log(`Borrando ultima pieza dibujada at `);
       removeLastPiece(); 
     }
     redraw(); 

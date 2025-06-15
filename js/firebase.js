@@ -7,26 +7,13 @@ import {
   getDocs,
   getDoc,
   doc,
+  deleteDoc,
   serverTimestamp 
 } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-firestore.js";
-
-export const sketchToSave = {
-    pieces: [],
-    user: null,
-    sketchName: "",
-    sketchDescription: "",
-    sketchImage: null,
-    sketchDate: "",
-    sketchTime: "",
-    renderStatus: {
-      width : 800,
-      height : 600,
-      viewScale: 1,
-      viewOffsetX: 0,
-      viewOffsetY: 0
-    },
-    stars: 0
-}
+import { cnv2 } from "./main.js";
+import { pieces } from "./pieces.js";
+import { currentUser } from "./auth.js";
+import { viewScale, viewOffsetX, viewOffsetY} from "./camera.js";
 
 
 /**
@@ -39,19 +26,37 @@ export async function saveSketch() {
     // Referencia a la colección
     const collRef = collection(db, "jengax-sketch");
 
-    // Añadimos createdAt por si quieres ordenarlos por fecha real de guardado
-    const sketchData = {
-      ...sketchToSave,
+    if (!cnv2 || !cnv2.elt) { 
+        throw new Error("El canvas de p5 aún no está inicializado");
+      }
+    const sketchData  = {
+      pieces : pieces, 
+      user : currentUser ? currentUser.uid : null,
+      sketchName : prompt("Nombre del sketch:"),
+      sketchImage : cnv2.elt.toDataURL("image/png"), // Captura la imagen del canvas
+      sketchDate : new Date().toLocaleDateString(),
+      sketchTime : new Date().toLocaleTimeString(),
+      renderStatus : {
+        height : height,
+        width : width,
+        viewScale : viewScale,
+        viewOffsetX : viewOffsetX,
+        viewOffsetY : viewOffsetY,
+      },
+      stars : 0, // Inicialmente 0 estrellas
       createdAt: serverTimestamp()
-    };
+      }
+  
 
     // Guardamos el documento
     const docRef = await addDoc(collRef, sketchData);
 
     console.log("✅ Sketch guardado con ID:", docRef.id);
+    alert("Sketch guardado correctamente");
     return docRef.id;
   } catch (error) {
-    console.error("❌ Error al guardar el sketch:", error);
+      console.error("❌ Error al guardar el sketch:", error);
+      alert("Error al guardar el sketch");
     throw error;
   }
 }
@@ -70,6 +75,7 @@ export async function fetchSketchList() {
       id: d.id,
       sketchName: data.sketchName,
       user: data.user,
+      sketchImage: data.sketchImage,
       createdAt: data.createdAt?.toDate() ?? null
     };
   });
@@ -83,6 +89,13 @@ export async function fetchSketchList() {
 export async function loadSketchById(id) {
   const ref = doc(db, "jengax-sketch", id);
   const snap = await getDoc(ref);
-  if (!snap.exists()) throw new Error("Sketch no encontrado");
+  if (!snap.exists()) throw new Error("Sketch not found");
   return snap.data();
+}
+
+/**
+ * Elimina un sketch por ID.
+ */
+export async function deleteSketch(id) {
+  await deleteDoc(doc(db, "jengax-sketch", id));
 }
