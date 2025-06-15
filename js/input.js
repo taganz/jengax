@@ -17,7 +17,15 @@ export let click_points     = [];
 
 export let qHeld;
 
+
+function mouseIsInsideCanvas() {
+  return mouseX >= 0 &&
+         mouseX <= width &&
+         mouseY >= 0 &&
+         mouseY <= height;
+}
 export function mousePressed() {
+  if (!mouseIsInsideCanvas()) return;  // ignore clicks off-canvas
   let wx = screenToWorldX(mouseX);
   let wy = screenToWorldY(mouseY);
   if (snapToGrid) {
