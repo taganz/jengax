@@ -9,7 +9,6 @@ import { getAuth } from 'https://www.gstatic.com/firebasejs/11.9.1/firebase-auth
 
 import { getFirestore } from 'https://www.gstatic.com/firebasejs/11.9.1/firebase-firestore.js'
 
-import { getStorage } from 'https://www.gstatic.com/firebasejs/11.9.1/firebase-storage.js'
 
 // Copia tu configuración desde Firebase Console
 const firebaseConfig = {
@@ -24,7 +23,6 @@ const firebaseConfig = {
 export const app = initializeApp(firebaseConfig);
 export const auth = getAuth(app);
 export const db = getFirestore(app);
-export const storage = getStorage(app);
 
 
 
