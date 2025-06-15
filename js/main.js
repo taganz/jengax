@@ -15,6 +15,8 @@ import { renderGallery } from "./ui.js";
 import { viewOffsetX, viewOffsetY, viewScale } from './camera.js';
 
 
+export let cnv; // p5.js canvas element
+let cnv2;  // no se quin es el canvas de veritat. 
 export const snapToGrid = true;
 let currentUser = null;
 
@@ -63,11 +65,17 @@ buttonLogout.addEventListener("click", (e) => {
 // --- INPUTS & UI ────────────────────────────────────────────────
 const userInfo = document.getElementById("user-info");
 buttonPublish.addEventListener("click", (e) => {
+
+  if (!cnv2 || !cnv2.elt) { 
+    throw new Error("El canvas de p5 aún no está inicializado");
+  }
+
+
   sketchToSave.pieces = pieces; 
   sketchToSave.user = currentUser ? currentUser.uid : null;
   sketchToSave.sketchName = prompt("Nombre del sketch:");
   sketchToSave.sketchDescription = prompt("Descripción del sketch:");
-  sketchToSave.sketchImage = ""; // Aquí deberías recoger la imagen del sketch
+  sketchToSave.sketchImage = cnv2.elt.toDataURL("image/png"); // Captura la imagen del canvas
   sketchToSave.sketchDate = new Date().toLocaleDateString();
   sketchToSave.sketchTime = new Date().toLocaleTimeString();
   sketchToSave.renderStatus.width = width;
@@ -75,7 +83,6 @@ buttonPublish.addEventListener("click", (e) => {
   sketchToSave.renderStatus.viewScale = viewScale;
   sketchToSave.renderStatus.viewOffsetX = viewOffsetX;
   sketchToSave.renderStatus.viewOffsetY = viewOffsetY;
-
   sketchToSave.stars = 0; // Inicialmente 0 estrellas
     saveSketch()
       .then(() => {
@@ -95,7 +102,7 @@ buttonGallery.addEventListener("click", (e) => {
 
 // ─── p5.js setup & draw ─────────────────────────────────────────────────
 export function setup() {
-  createCanvas(800, 600);
+  cnv2 = createCanvas(800, 600);
   noLoop();
 
 
@@ -105,12 +112,8 @@ export function setup() {
   gallery.classList.add("hidden");
 
 
-
-  //let worldMinX = width /2 / viewScale;   // --> SERIA / O *?
-  //let worldMinY = height /2 / viewScale;  // --> SERIA / O *?
-
   // Prevent right-click menu
-  let cnv = document.querySelector('canvas');
+  cnv = document.querySelector('canvas');   // cnv es un p5.Element
   cnv.addEventListener('contextmenu', e => e.preventDefault());
 
   // Prevent page scroll on canvas wheel

@@ -15,7 +15,7 @@ export const sketchToSave = {
     user: null,
     sketchName: "",
     sketchDescription: "",
-    sketchImage: "",
+    sketchImage: null,
     sketchDate: "",
     sketchTime: "",
     renderStatus: {
