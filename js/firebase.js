@@ -29,9 +29,11 @@ export async function saveSketch() {
     if (!cnv2 || !cnv2.elt) { 
         throw new Error("El canvas de p5 aún no está inicializado");
       }
+    
     const sketchData  = {
       pieces : pieces, 
       user : currentUser ? currentUser.uid : null,
+      userDisplayName : currentUser ? currentUser.displayName : null,
       sketchName : prompt("Nombre del sketch:"),
       sketchImage : cnv2.elt.toDataURL("image/png"), // Captura la imagen del canvas
       sketchDate : new Date().toLocaleDateString(),
@@ -73,8 +75,9 @@ export async function fetchSketchList() {
     const data = d.data();
     return {
       id: d.id,
-      sketchName: data.sketchName,
+      sketchName: data.sketchName  ? data.sketchName : "Untitled",
       user: data.user,
+      userDisplayName: data.userDisplayName || "Anonymous",
       sketchImage: data.sketchImage,
       createdAt: data.createdAt?.toDate() ?? null
     };

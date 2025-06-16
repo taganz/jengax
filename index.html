@@ -14,9 +14,16 @@
 <head>
   <meta charset="UTF-8" />
   <title>Jengax</title>
-  <script src="https://cdn.eu.amplitude.com/script/63cc69dbcb670bd96bc68d528d991d76.js"></script>
-  <script>window.amplitude.add(window.sessionReplay.plugin({sampleRate: 1}));window.amplitude.init('63cc69dbcb670bd96bc68d528d991d76', {"fetchRemoteConfig":true,"serverZone":"EU","autocapture":true});</script>
+  <!--- Amplitude -->
+  <script src="https://cdn.amplitude.com/libs/analytics-browser-2.11.1-min.js.gz"></script>
+  <script src="https://cdn.amplitude.com/libs/plugin-session-replay-browser-1.8.0-min.js.gz"></script>
+  <script>
+    window.amplitude.add(window.sessionReplay.plugin({sampleRate: 1}));
+    window.amplitude.init('c509f1e1e133e3160d7831f9e383dd72', {"autocapture":{"elementInteractions":true}});
+  </script>
+  <!--- P5JS -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.0/p5.min.js"></script>
+  <!--- Mocha -->
   <link rel="stylesheet" href="https://unpkg.com/mocha/mocha.css" />
   <style>
     body { font-family: sans-serif; margin: 0; }

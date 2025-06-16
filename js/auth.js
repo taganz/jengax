@@ -20,6 +20,7 @@ export async function login() {
     currentUser = response.user;
     currentUserId = currentUser.uid; // Guardamos el ID del usuario autenticado
     localStorage.setItem("user", JSON.stringify(currentUser));
+    //console.log("Usuario autenticado:", currentUser);
   } 
   catch (error) 
   {

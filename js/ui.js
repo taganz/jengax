@@ -112,6 +112,7 @@ export async function renderGallery() {
     itemDiv.className = "gallery-item";
 
     // Tooltip nativo con todos los detalles
+
     const fecha = item.createdAt
       ? item.createdAt.toLocaleDateString() 
       : "Fecha desconocida";
@@ -120,10 +121,28 @@ export async function renderGallery() {
       : "";
     itemDiv.title = 
       `Name: ${item.sketchName}\n` +
-      `Author: ${item.user}\n` +
+      `Author: ${item.userDisplayName}\n` +
       `Upload: ${fecha}  ${hora}`;
 
+
+    // Nombre 
+
+    const nameDiv = document.createElement("div");
+    nameDiv.textContent = item.sketchName;
+    nameDiv.style.fontSize = "14px";
+    nameDiv.style.marginTop = "2px";
+    nameDiv.style.fontWeight = "bold";
+    itemDiv.appendChild(nameDiv);
+
+    const authorDiv = document.createElement("div");
+    authorDiv.style.fontSize = "12px";
+    authorDiv.textContent = item.userDisplayName ;
+    authorDiv.style.marginTop = "2px";
+    //nameDiv.style.fontWeight = "bold";
+    itemDiv.appendChild(authorDiv);
+
     // Imagen
+
     const img = document.createElement("img");
     img.src = item.sketchImage;
     img.alt = item.sketchName;
@@ -135,14 +154,10 @@ export async function renderGallery() {
     });
     itemDiv.appendChild(img);
 
-    // Nombre bajo la imagen
-    const nameDiv = document.createElement("div");
-    nameDiv.textContent = item.sketchName;
-    nameDiv.style.marginTop = "4px";
-    nameDiv.style.fontWeight = "bold";
-    itemDiv.appendChild(nameDiv);
+
 
     // Botones Load / Delete
+
     const btnWrap = document.createElement("div");
     btnWrap.className = "buttons";
 
