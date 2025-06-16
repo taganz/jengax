@@ -24,14 +24,12 @@ export function worldToScreenY(wy) {
 }
 
 export function zoomAt(mouseX, mouseY, factor) {
-  // world point under cursor
   const wx = screenToWorldX(mouseX);
   const wy = screenToWorldY(mouseY);
   viewScale *= factor;
   viewOffsetX = mouseX - wx * viewScale;
-  //viewOffsetY = mouseY - wy * viewScale;    // --> revisar aixo
-  viewOffsetY = height - mouseY - wy * viewScale; // Adjust for p5's coordinate system
-  
+  // Invert the Y axis correction:
+  viewOffsetY = mouseY - (height - wy * viewScale);
 }
 
 export function pan(dx, dy) {
