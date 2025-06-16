@@ -13,6 +13,9 @@ import { snapToGrid } from './main.js';
 import { screenToWorldX, screenToWorldY } from './camera.js';
 import { logCursorPosition } from './utils.js';
 
+let isDragging = false;
+let lastMouseX = 0;
+let lastMouseY = 0;
 
 export let qHeld;
 
@@ -25,6 +28,14 @@ function mouseIsInsideCanvas() {
 }
 export function mousePressed() {
   if (!mouseIsInsideCanvas()) return;  // ignore clicks off-canvas
+
+  if (mouseButton === CENTER || (mouseButton === LEFT && keyIsDown(SHIFT))) {
+    isDragging = true;
+    lastMouseX = mouseX;
+    lastMouseY = mouseY;
+    return false; // prevent interaction
+  }
+
   let wx = screenToWorldX(mouseX);
   let wy = screenToWorldY(mouseY);
   if (snapToGrid) {
@@ -61,6 +72,18 @@ export function mousePressed() {
   return;
 }
 
+export function mouseReleased() {
+  isDragging = false;
+}
+
+export function mouseDragged() {
+  if (isDragging) {
+    pan(mouseX - lastMouseX, mouseY - lastMouseY);
+    lastMouseX = mouseX;  
+    lastMouseY = mouseY;
+    redraw();
+  }
+}
 
 export function keyPressed() {
   // save state to file

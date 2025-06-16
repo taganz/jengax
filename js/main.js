@@ -2,7 +2,7 @@
 
 // main.js
 import { draw as p5draw }            from './rendering.js';
-import { mousePressed }  from './input.js';
+import { mousePressed, mouseReleased, mouseDragged }  from './input.js';
 import { keyPressed, keyReleased, handleZoom }   from './input.js';
 import { handleFile, setFileInput } from './io.js';
 import { initUI } from './ui.js';
@@ -45,6 +45,8 @@ export function setup() {
 window.setup        = setup;
 window.draw         = p5draw;
 window.mousePressed = mousePressed;
+window.mouseReleased = mouseReleased;
+window.mouseDragged = mouseDragged;
 //window.mouseWheel   = mouseWheel;
 window.keyPressed   = keyPressed;
 window.keyReleased  = keyReleased;
