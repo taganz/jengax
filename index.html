@@ -1,93 +1,86 @@
 <!DOCTYPE html>
-<html lang="es">
-  <title>Jengax – Interactive Canvas Sketching with Mouse & Keyboard</title>
-  <meta name="description" content="Jengax is an interactive canvas sketching tool that allows you to create and manipulate structures with your mouse and keyboard.">
-  <meta name="keywords" content="Jengax, interactive sketching, canvas drawing, mouse and keyboard, creative tool, web application, HTML5, JavaScript">
-  <link rel="stylesheet" href="./main.css" />  
-  <!-- Google Analytics -->
-  <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){ dataLayer.push(arguments); }
-    gtag('js', new Date());
-    gtag('config', 'G-MB1BSTYCW7');
-  </script>
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Jengax</title>
-  <!--- Amplitude -->
+  <title>Jengax – Interactive Canvas Sketching Tool</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Jengax is a desktop-first sketching tool where you build block structures one click at a time.">
+  <meta name="keywords" content="Jengax, sketching, canvas drawing, block builder, web app">
+
+  <!-- STYLES -->
+  <link rel="stylesheet" href="./main.css" />
+
+  <!-- Amplitude -->
   <script src="https://cdn.amplitude.com/libs/analytics-browser-2.11.1-min.js.gz"></script>
   <script src="https://cdn.amplitude.com/libs/plugin-session-replay-browser-1.8.0-min.js.gz"></script>
   <script>
-    window.amplitude.add(window.sessionReplay.plugin({sampleRate: 1}));
-    window.amplitude.init('c509f1e1e133e3160d7831f9e383dd72', {"autocapture":{"elementInteractions":true}});
+    window.amplitude.add(window.sessionReplay.plugin({ sampleRate: 1 }));
+    window.amplitude.init('c509f1e1e133e3160d7831f9e383dd72', {
+      autocapture: { elementInteractions: true }
+    });
   </script>
-  <!--- P5JS -->
+
+  <!-- P5.js -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.0/p5.min.js"></script>
-  <!--- Mocha -->
+
+  <!-- Mocha (optional, for testing) -->
   <link rel="stylesheet" href="https://unpkg.com/mocha/mocha.css" />
-  <style>
-    body { font-family: sans-serif; margin: 0; }
-    #defaultCanvas0 { display: block; margin: auto; }
-  </style>
+
+
 </head>
 <body>
 
   <main>
-    <div class="header-bar">
-      <div style="width: 120px;"></div> <!-- espacio vacío para simetría -->
-      <div class="title"> <strong>Jengax</strong>. Sketch one click at a time.</div>
-      <div id="logged-user"></div>
-      <button id="button-login">Login with Google</button>
-      <button id="button-logout" class="hidden">Logout</button>
-      </div>
-    <p style="text-align: center; font-family: sans-serif; font-size: 8pxpx; margin-top: 10px;">
-  
-      <button id="button-publish" class="hidden">Publish</button>
-      <button id="button-gallery" class="hidden">View gallery</button>
-      <button id="button-canvas" class="hidden">Hide gallery</button>
+  <header class="header-bar">
+    <div style="width: 120px;"></div>
+    <div class="title"><strong>Jengax</strong> – Sketch one click at a time</div>
+    <div id="logged-user" class="logged-user"></div>
+    <button id="button-login">Login with Google</button>
+    <button id="button-logout" class="hidden">Logout</button>
+  </header>
 
-       <!-- Contenedor para la galeria inicialmente oculto -->
-      <div id="gallery" class="hidden"></div>
+  <section class="controls" style="text-align: center; margin-top: 12px;">
+    <button id="button-publish" class="hidden">Publish to gallery</button>
+    <button id="button-gallery" class="hidden">View public gallery</button>
+    <button id="button-canvas" class="hidden">Hide gallery</button>
+    <button id="button-save-file" class="hidden">Save to file</button>
+    <button id="button-load-file" class="hidden">Load from file</button>
+  </section>
 
+  <!-- Gallery -->
+  <section id="gallery" class="hidden"></section>
   </main>
 
-
-<!-- MAIN -->
-  <script src="js/main.js" type="module" ></script>
-
+  
+  <!-- Main JS app -->
+  <script type="module" src="js/main.js"></script>
   <!-- INSTRUCTIONS -->
-<div id="instructions" style="text-align: center;font-family: sans-serif; margin-top: 16px; line-height: 1.5;">
-  <ul style="list-style: none; padding: 0;">
-    
-    <li>Desktop version</li>
-    <li><strong>Left-click</strong> to place pieces. <strong>Right-click</strong> to undo or to remove pieces.</li>
-    <li>Horizontal pieces need support on both sides</li>
-    <li>Zoom in/out canvas with <strong>mouse wheel</strong> and move it with <strong>arrow</strong> keys</li>
-    <li>Save and load with <strong>S & L</strong> keys</li>
-    <!--li>Look at this <a href="assets/readme.png" target="_blank">example</a></li-->
-    <div id="sample-gallery" style="margin-top: 32px; text-align: center;">
-
-
-  <h3 style="font-family: sans-serif;">Examples</h3>
-  <div style="display: flex; justify-content: center; gap: 12px; flex-wrap: wrap;">
-    <img src="assets/jengax-city4.png" alt="Example 1" style="width: 30%; max-width: 250px; border: 1px solid #ccc;" />
-    <img src="assets/city1.png" alt="Example 2" style="width: 30%; max-width: 250px; border: 1px solid #ccc;" />
-    <img src="assets/jengax6.png" alt="Example 3" style="width: 30%; max-width: 250px; border: 1px solid #ccc;" />
-  </div>
-  <p/>
-
-    <div id="instructions" style="text-align: center;font-family: sans-serif; margin-top: 16px; line-height: 1.5;">
-      <ul style="list-style: none; padding: 0;">
-        <div style="text-align: center; font-family: sans-serif; font-size: 14px; margin-top: 10px; color: #a00;">
-      This version is intended for use with a keyboard and mouse.<br>
+  <section id="instructions" style="text-align: center; margin-top: 20px;">
+    <ul style="list-style: none; padding: 0; line-height: 1.7;">
+      <li><strong>Left-click</strong> to place a piece. If you want it to be horizontal, it must be supported on both sides.</li>
+      <li><strong>Right-click</strong> to remove a piece or undo the last one.</li>
+      <li><strong>Mouse wheel</strong> to zoom. <strong>Arrow keys</strong> to move the canvas.</li>
+    </ul>
+    <div style="color: #a00; margin-top: 10px;">
+      ⚠️ This version is intended for desktop use with keyboard and mouse.<br>
       It is not optimized for touchscreens or mobile devices.
     </div>
+  </section>
+
+  <!-- Sample Gallery -->
+  <section id="sample-gallery" style="margin-top: 32px; text-align: center;">
+    <h3>Examples</h3>
+    <div style="display: flex; justify-content: center; gap: 12px; flex-wrap: wrap;">
+      <img src="assets/jengax-city4.png" alt="Example 1" style="width: 30%; max-width: 250px; border: 1px solid #ccc;" />
+      <img src="assets/city1.png" alt="Example 2" style="width: 30%; max-width: 250px; border: 1px solid #ccc;" />
+      <img src="assets/jengax7.png" alt="Example 3" style="width: 30%; max-width: 250px; border: 1px solid #ccc;" />
+    </div>
+  </section>
+
+  <footer style="text-align: center; margin: 32px 0; font-size: 0.9em;">
+    <a href="https://github.com/taganz/jengax">GitHub</a>
+  </footer>
 
 
-
-  <a href="https://github.com/taganz/jengax">Github</a>
-</div>
-  </ul>
-</div>
 </body>
 </html>

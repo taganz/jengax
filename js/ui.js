@@ -1,6 +1,6 @@
 // ui.js
 import { fetchSketchList, loadSketchById, deleteSketch, saveSketch } from "./firebase.js";
-import { loadSketchFromGallery } from "./io.js";
+import { handleSave, handleLoad, loadSketchFromGallery } from "./io.js";
 import { login, logout, currentUserId, currentUser } from "./auth.js";
 
 const buttonLogin = document.getElementById("button-login");
@@ -8,6 +8,8 @@ const buttonLogout = document.getElementById("button-logout");
 const buttonPublish = document.getElementById("button-publish");
 const buttonGallery = document.getElementById("button-gallery");
 const buttonCanvas = document.getElementById("button-canvas");
+const buttonSave = document.getElementById("button-save-file");
+const buttonLoad = document.getElementById("button-load-file");
 const gallery = document.getElementById("gallery");
 const userInfo = document.getElementById("logged-user");
 
@@ -55,7 +57,12 @@ export function initUI() {
     buttonPublish.addEventListener("click", (e) => {    
      saveSketch();
     });
-    
+    buttonSave.addEventListener("click", (e) => {    
+     handleSave();
+    });
+    buttonLoad.addEventListener("click", (e) => {    
+     handleLoad();
+    });
 }     
 
 // ---- Menu states --------------
@@ -64,6 +71,8 @@ export function setUIModeGallery() {
     gallery.classList.remove("hidden");
     buttonGallery.classList.add("hidden");
     buttonCanvas.classList.remove("hidden");
+    buttonSave.classList.remove("hidden");
+    buttonLoad.classList.remove("hidden");
   }
 export function setUIModeCanvas() {
     setLoginStateButtons();
@@ -71,6 +80,8 @@ export function setUIModeCanvas() {
     //gallery.classList.add("hidden");
     buttonGallery.classList.remove("hidden");
     buttonCanvas.classList.add("hidden");
+    buttonSave.classList.remove("hidden");
+    buttonLoad.classList.remove("hidden");
 }
 
 function setLoginStateButtons() {
