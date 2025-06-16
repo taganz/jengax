@@ -10,6 +10,7 @@ const buttonGallery = document.getElementById("button-gallery");
 const buttonCanvas = document.getElementById("button-canvas");
 const buttonSave = document.getElementById("button-save-file");
 const buttonLoad = document.getElementById("button-load-file");
+const textLoginToGallery = document.getElementById("msg-log-for-gallery");
 const gallery = document.getElementById("gallery");
 const userInfo = document.getElementById("logged-user");
 
@@ -45,12 +46,8 @@ export function initUI() {
     buttonLogout.addEventListener("click", (e) => {
       logout();
       localStorage.removeItem("user");
-      buttonLogin.classList.remove("hidden");
-      buttonLogout.classList.add("hidden");
-      buttonPublish.classList.add("hidden");
-      userInfo.innerHTML = "";
+      setLoginStateButtons() ;
       console.log("Usuario desconectado");
-      currentUser = null;
     });
     
 
@@ -67,18 +64,18 @@ export function initUI() {
 
 // ---- Menu states --------------
 export function setUIModeGallery() {
-    setLoginStateButtons();
     gallery.classList.remove("hidden");
-    buttonGallery.classList.add("hidden");
     buttonCanvas.classList.remove("hidden");
-    buttonSave.classList.remove("hidden");
-    buttonLoad.classList.remove("hidden");
-  }
+    buttonSave.classList.add("hidden");
+    buttonLoad.classList.add("hidden");
+    buttonGallery.classList.add("hidden");
+    buttonPublish.classList.add("hidden");
+        
+}
 export function setUIModeCanvas() {
     setLoginStateButtons();
     gallery.style.display = "none";
     //gallery.classList.add("hidden");
-    buttonGallery.classList.remove("hidden");
     buttonCanvas.classList.add("hidden");
     buttonSave.classList.remove("hidden");
     buttonLoad.classList.remove("hidden");
@@ -86,16 +83,20 @@ export function setUIModeCanvas() {
 
 function setLoginStateButtons() {
     if (currentUser) {
+        buttonGallery.classList.remove("hidden");
         buttonLogin.classList.add("hidden");
         buttonLogout.classList.remove("hidden");
         buttonPublish.classList.remove("hidden");
+        textLoginToGallery.classList.add("hidden");
         userInfo.innerHTML = `
            <span>${currentUser.displayName}</span>
           `;
     } else {
+        buttonGallery.classList.add("hidden");
         buttonLogin.classList.remove("hidden");
         buttonLogout.classList.add("hidden");
         buttonPublish.classList.add("hidden");
+        textLoginToGallery.classList.remove("hidden");
         userInfo.innerHTML = "";
     }
 }

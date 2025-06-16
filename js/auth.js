@@ -30,6 +30,8 @@ export async function login() {
 
 export function logout() {
   signOut(auth);
+  currentUser = null;
+  currentUserId = null; // Limpiamos el ID del usuario autenticado
 }
 
 onAuthStateChanged(auth, (user) => {
