@@ -18,7 +18,9 @@ Users can place vertical and horizontal rectangular pieces based on specific sup
 - **Mouse wheel** Zoom in/out the canvas under the cursor
 - **Shift+Left-click** or **Middle-click** or **Arrow keys** to move the canvas.
 
-- Hold **Q** to show current mouse coordinates
+- Hold **Q** to show current mouse coordinates.
+
+- **Draw modes**: Press **1** for hand drawn and **2** for solid.
 
 ## I/O
 

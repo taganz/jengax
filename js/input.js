@@ -12,6 +12,7 @@ import { handleSave, handleLoad } from './io.js';
 import { snapToGrid } from './main.js';
 import { screenToWorldX, screenToWorldY } from './camera.js';
 import { logCursorPosition } from './utils.js';
+import { setDrawModeHand, setDrawModeSolid } from './rendering.js';
 
 let isDragging = false;
 let lastMouseX = 0;
@@ -99,6 +100,10 @@ export function keyPressed() {
   if (keyCode===RIGHT_ARROW) { pan(-20,0); redraw(); }
   if (keyCode===UP_ARROW)    { pan(0,20); redraw(); }
   if (keyCode===DOWN_ARROW)  { pan(0,-20); redraw(); }
+  // draw mode
+  if (key==='1') {setDrawModeHand(); redraw()};
+  if (key==='2') {setDrawModeSolid(); redraw()};
+
 }
 
 export function keyReleased() {

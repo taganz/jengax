@@ -11,7 +11,20 @@ const piece_color      = '#964B00';
 const background_color = '#F0F0F0';
 
 
+let scribble;
+ 
+function initScribble() {
+  scribble = new Scribble();
+  scribble.bowing = 0.5;
+  scribble.roughness = 1.2;
+}
+
+export function setDrawModeHand() { drawMode = 'hand-drawn'; console.log('Draw mode set to Hand Drawn')};
+export function setDrawModeSolid() {drawMode = 'solid';console.log('Draw mode set to Solid')}
+let drawMode = 'hand-drawn'; // 'hand-drawn' or 'solid'
+
 export function draw() {
+  if (drawMode==="hand-drawn" && !scribble) initScribble();
   background(background_color);
   rectMode(CENTER);  // 
   // Camera transform (viewScale, viewOffsetX, viewOffsetY)
@@ -24,8 +37,17 @@ export function draw() {
     
 
     drawGround();          
-    pieces.forEach(drawPiece);
-    //drawHoveredPointIfNeeded();
+    switch (drawMode) {
+      case 'solid': 
+        pieces.forEach(drawPiece);
+        break;
+      case 'hand-drawn':
+        pieces.forEach(drawHandDrawnPiece);  
+        break;
+      default:  
+        console.log(`Invalid drawMode: ${drawMode}`);
+        pieces.forEach(drawHandDrawnPiece);
+    }
   pop();
   
   if (qHeld) {
@@ -60,6 +82,19 @@ export function drawPiece(p) { //}, piece_border, piece_color) {
 }
 
 
+
+export function drawHandDrawnPiece(p) {
+  if (!scribble) { console.log('Scribble not initialized'); return};
+  let x = p.x, y = p.y, w = p.width, h = p.height;
+  const xCoords = [x - w / 2, x + w / 2, x + w / 2, x - w / 2];
+  const yCoords = [y - h / 2, y - h / 2, y + h / 2, y + h / 2];
+  stroke(0);
+  noFill();
+  scribble.scribbleFilling(xCoords, yCoords, 2);
+  scribble.scribbleRect(x, y, w, h);
+  scribble.scribbleFilling( xCoords, yCoords, 2, PI/8 );
+
+}
 
 export function drawTooltip(label, sx, sy) {
   textSize(12);
