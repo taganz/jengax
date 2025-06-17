@@ -14,6 +14,7 @@ const buttonLoad = document.getElementById("button-load-file");
 const textLoginToGallery = document.getElementById("msg-log-for-gallery");
 const gallery = document.getElementById("gallery");
 const userInfo = document.getElementById("logged-user");
+const textWarningMobile = document.getElementById("warning-mobile");
 
 export function initUI() {
 
@@ -64,13 +65,8 @@ export function initUI() {
 
     
   if (isMobileDevice()) {
-    const warning = document.createElement('div');
-    warning.textContent = "⚠️ Jengax is designed for desktop. Some features may not work well on mobile devices.";
-    warning.style.cssText = `
-      position: fixed;
-      bottom: 0;
-      left: 0;
-      right: 0;
+    textWarningMobile.textContent = "⚠️ Jengax is designed for desktop. Some features may not work well on mobile devices.";
+    textWarningMobile.style.cssText = `
       background: #fdd;
       color: #900;
       padding: 12px;
@@ -79,7 +75,15 @@ export function initUI() {
       font-size: 14px;
       z-index: 1000;
     `;
-    document.body.appendChild(warning);
+    /*
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+    */
+    //document.body.appendChild(warning);
+    
+    textWarningMobile.classList.remove("hidden");
   }
 
 }     
