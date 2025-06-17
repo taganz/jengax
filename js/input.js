@@ -41,6 +41,7 @@ export function mousePressed() {
   let wy = screenToWorldY(mouseY);
   if (snapToGrid) {
     wx = Math.round(wx / piece_width) * piece_width;
+    wy = Math.round(wy / piece_width) * piece_width;
   }
   // borrar piezas
   if (mouseButton === RIGHT) {

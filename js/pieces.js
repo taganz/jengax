@@ -135,14 +135,17 @@ export function addHorizontalPieceIfPossible(wx, wy) {
 
 export function drawVerticalPiece(wx, wy) {
   let support = getHighestPieceBelow(wx, wy);
+    // el top de la peça que te a sota
     let baseY   = support
                   ? support.y + support.height/2
                   : 0;
   
-    let needed = baseY - wy;
+    let needed = wy - baseY;
     let size   = getMinSizeToCover(abs(needed));
     let pH     = size * piece_width;
+    pH         = min (needed, pH);
     let cY     = baseY + pH/2;
+    console.log(`needed ${needed} size ${size} pH ${pH} cY ${cY} `);
     pieces.push({ x: wx, y: cY, width: piece_width, height: pH, horizontal: false });
 
 }
