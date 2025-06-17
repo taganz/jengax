@@ -2,6 +2,7 @@
 import { fetchSketchList, loadSketchById, deleteSketch, saveSketch } from "./firebase.js";
 import { handleSave, handleLoad, loadSketchFromGallery } from "./io.js";
 import { login, logout, currentUserId, currentUser } from "./auth.js";
+import { isMobileDevice } from './utils.js';
 
 const buttonLogin = document.getElementById("button-login");
 const buttonLogout = document.getElementById("button-logout");
@@ -60,6 +61,27 @@ export function initUI() {
     buttonLoad.addEventListener("click", (e) => {    
      handleLoad();
     });
+
+    
+  if (isMobileDevice()) {
+    const warning = document.createElement('div');
+    warning.textContent = "⚠️ Jengax is designed for desktop. Some features may not work well on mobile devices.";
+    warning.style.cssText = `
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: #fdd;
+      color: #900;
+      padding: 12px;
+      text-align: center;
+      font-family: sans-serif;
+      font-size: 14px;
+      z-index: 1000;
+    `;
+    document.body.appendChild(warning);
+  }
+
 }     
 
 // ---- Menu states --------------
@@ -204,3 +226,4 @@ export async function renderGallery() {
     gallery.appendChild(itemDiv);
   });
 }
+

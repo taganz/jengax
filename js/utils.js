@@ -24,3 +24,8 @@ export function logCursorPosition() {
   console.log(`Camera scale: ${viewScale}`);
   console.log(`Camera offset: (${viewOffsetX}, ${viewOffsetY})`);
 }
+
+export function isMobileDevice() {
+  return /Mobi|Android|iPhone|iPad|iPod|Windows Phone/i.test(navigator.userAgent);
+}
+
