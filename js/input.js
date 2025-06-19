@@ -12,7 +12,7 @@ import { handleSave, handleLoad } from './io.js';
 import { snapToGrid } from './main.js';
 import { screenToWorldX, screenToWorldY } from './camera.js';
 import { logCursorPosition } from './utils.js';
-import { setDrawModeHand, setDrawModeSolid } from './rendering.js';
+import { setDrawModeHand, setDrawModeSolid, toogleAutoDraw } from './rendering.js';
 
 let isDragging = false;
 let lastMouseX = 0;
@@ -104,6 +104,9 @@ export function keyPressed() {
   // draw mode
   if (key==='1') {setDrawModeHand(); redraw()};
   if (key==='2') {setDrawModeSolid(); redraw()};
+  // auto draw
+  if (key==='A' || key==='a') {toogleAutoDraw();redraw()};
+  
 
 }
 

@@ -21,6 +21,7 @@ Users can place vertical and horizontal rectangular pieces based on specific sup
 - Hold **Q** to show current mouse coordinates.
 
 - **Draw modes**: Press **1** for hand drawn and **2** for solid.
+- Press **A** to **autodraw** current sketch.
 
 ## I/O
 

@@ -10,7 +10,6 @@ const ground_color     = '#505050';
 const piece_color      = '#964B00';
 const background_color = '#F0F0F0';
 
-
 let scribble;
  
 function initScribble() {
@@ -19,13 +18,35 @@ function initScribble() {
   scribble.roughness = 1.2;
 }
 
+let autoDraw = false;
+let autoDrawCurrentPieceId;
+export function toogleAutoDraw(){
+  if (autoDraw) setAutoDrawOff();
+  else setAutoDrawOn();
+}
+function setAutoDrawOn() {
+  autoDraw = true;
+  autoDrawCurrentPieceId = 0;
+  background(background_color);
+  const x = pieces.length;
+  const frate = x => int(x <= 20 ? 10 : x >= 100 ? 60 : map(x, 20, 100, 10, 60));
+  console.log(`num pieces = ${x} and frame rate set to ${frate(x)}`);
+  frameRate(frate(x));
+  noLoop();
+}
+function setAutoDrawOff() {
+  autoDraw = false;
+  frameRate();
+  loop();
+}
+
 export function setDrawModeHand() { drawMode = 'hand-drawn'; console.log('Draw mode set to Hand Drawn')};
 export function setDrawModeSolid() {drawMode = 'solid';console.log('Draw mode set to Solid')}
 let drawMode = 'hand-drawn'; // 'hand-drawn' or 'solid'
 
 export function draw() {
   if (drawMode==="hand-drawn" && !scribble) initScribble();
-  background(background_color);
+  if (!autoDraw) background(background_color);
   rectMode(CENTER);  // 
   // Camera transform (viewScale, viewOffsetX, viewOffsetY)
   push();
@@ -37,24 +58,34 @@ export function draw() {
     
 
     drawGround();          
+    let drawModeFunction;
     switch (drawMode) {
       case 'solid': 
-        pieces.forEach(drawPiece);
+        drawModeFunction = drawPiece;
         break;
       case 'hand-drawn':
-        pieces.forEach(drawHandDrawnPiece);  
+        drawModeFunction = drawHandDrawnPiece;  
         break;
       default:  
         console.log(`Invalid drawMode: ${drawMode}`);
-        pieces.forEach(drawHandDrawnPiece);
+        drawModeFunction = drawHandDrawnPiece;
     }
+  if (!autoDraw) {
+    pieces.forEach(drawModeFunction);  
+   if (!qHeld) noLoop();
+  } else {
+    drawModeFunction(pieces[autoDrawCurrentPieceId++]);
+    if (autoDrawCurrentPieceId == pieces.length) { 
+      setAutoDrawOff();
+    } else {
+      loop();
+    }
+  }
   pop();
   
   if (qHeld) {
     drawPositionAtCursor();
   }
-
-  if (!qHeld) noLoop();
 }
 
 export function drawGround() { //width, piece_width, ground_border, ground_color) {
