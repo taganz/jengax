@@ -145,7 +145,7 @@ export function drawVerticalPiece(wx, wy) {
     let pH     = size * piece_width;
     pH         = min (needed, pH);
     let cY     = baseY + pH/2;
-    console.log(`needed ${needed} size ${size} pH ${pH} cY ${cY} `);
+    //console.log(`needed ${needed} size ${size} pH ${pH} cY ${cY} `);
     pieces.push({ x: wx, y: cY, width: piece_width, height: pH, horizontal: false });
 
 }
