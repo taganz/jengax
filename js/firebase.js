@@ -10,7 +10,7 @@ import {
   deleteDoc,
   serverTimestamp 
 } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-firestore.js";
-import { cnv2 } from "./main.js";
+import { cnv } from "./main.js";
 import { pieces } from "./pieces.js";
 import { currentUser } from "./auth.js";
 import { viewScale, viewOffsetX, viewOffsetY} from "./camera.js";
@@ -26,7 +26,7 @@ export async function saveSketch() {
     // Referencia a la colección
     const collRef = collection(db, "jengax-sketch");
 
-    if (!cnv2 || !cnv2.elt) { 
+    if (!cnv || !cnv.elt) { 
         throw new Error("El canvas de p5 aún no está inicializado");
       }
     
@@ -35,7 +35,7 @@ export async function saveSketch() {
       user : currentUser ? currentUser.uid : null,
       userDisplayName : currentUser ? currentUser.displayName : null,
       sketchName : prompt("Nombre del sketch:"),
-      sketchImage : cnv2.elt.toDataURL("image/png"), // Captura la imagen del canvas
+      sketchImage : cnv.elt.toDataURL("image/png"), // Captura la imagen del canvas
       sketchDate : new Date().toLocaleDateString(),
       sketchTime : new Date().toLocaleTimeString(),
       renderStatus : {
