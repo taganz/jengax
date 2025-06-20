@@ -34,6 +34,7 @@ export function mousePressed() {
     isDragging = true;
     lastMouseX = mouseX;
     lastMouseY = mouseY;
+    posthog.capture('input_drag');
     return false; // prevent interaction
   }
 
@@ -47,6 +48,7 @@ export function mousePressed() {
   if (mouseButton === RIGHT) {
     // Si hay una pieza bajo el cursor, la borra
     const index = getPieceIdUnderWorld(wx, wy);
+    posthog.capture('input_delete');
     if (index) { 
       //console.log('Borrando pieza id: ', index, ' at ', wx, wy);
       deletePiece(index);
@@ -60,15 +62,20 @@ export function mousePressed() {
     return false;
   }
   if (restoreLastDeletedPiece(wx, wy)) {
+    posthog.capture('input_restore');
     redraw();
     return;
   }
   
+  posthog.capture('input_add');
+
   if (addHorizontalPieceIfPossible(wx, wy)) {
+    posthog.capture('input_add_horizontal');
     redraw();
     return;
   }
 
+  posthog.capture('input_add_vertical');
   drawVerticalPiece(wx, wy);
   redraw();
   return;
@@ -89,23 +96,23 @@ export function mouseDragged() {
 
 export function keyPressed() {
   // save state to file
-  if (key==='S'||key==='s') { handleSave(); return; }
+  if (key==='S'||key==='s') { handleSave();   posthog.capture('input_save'); return; }
   // load state from file
-  if (key==='L'||key==='l') { handleLoad(); return; }
+  if (key==='L'||key==='l') { handleLoad();   posthog.capture('input_load'); return; }
   // position tooltip at cursor
-  if (key==='Q'||key==='q') { qHeld=true; loop(); }
+  if (key==='Q'||key==='q') { qHeld=true;   posthog.capture('input_q_tooltip'); loop(); }
   // log cursor position
-  if (key==='W'||key==='w') { logCursorPosition(); }
+  if (key==='W'||key==='w') { logCursorPosition();   posthog.capture('input_w_log'); }
   // arrow keys for pan
-  if (keyCode===LEFT_ARROW)  { pan(20,0); redraw(); }
-  if (keyCode===RIGHT_ARROW) { pan(-20,0); redraw(); }
-  if (keyCode===UP_ARROW)    { pan(0,20); redraw(); }
-  if (keyCode===DOWN_ARROW)  { pan(0,-20); redraw(); }
+  if (keyCode===LEFT_ARROW)  { pan(20,0); redraw();   posthog.capture('input_pan'); }
+  if (keyCode===RIGHT_ARROW) { pan(-20,0); redraw(); posthog.capture('input_pan'); }
+  if (keyCode===UP_ARROW)    { pan(0,20); redraw(); posthog.capture('input_pan'); }
+  if (keyCode===DOWN_ARROW)  { pan(0,-20); redraw(); posthog.capture('input_pan'); }
   // draw mode
-  if (key==='1') {setDrawModeHand(); redraw()};
-  if (key==='2') {setDrawModeSolid(); redraw()};
+  if (key==='1') {setDrawModeHand(); redraw(); posthog.capture('input_draw_mode_1'); }
+  if (key==='2') {setDrawModeSolid(); redraw(); posthog.capture('input_draw_mode_2'); }
   // auto draw
-  if (key==='A' || key==='a') {toogleAutoDraw();redraw()};
+  if (key==='A' || key==='a') {toogleAutoDraw();redraw(); posthog.capture('input_auto_draw_toogle'); }
   
 
 }
