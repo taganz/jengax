@@ -3,10 +3,12 @@ import { fetchSketchList, loadSketchById, deleteSketch, saveSketch } from "./fir
 import { handleSave, handleLoad, loadSketchFromGallery, loadAssetJSON } from "./io.js";
 import { login, logout, currentUserId, currentUser } from "./auth.js";
 import { isMobileDevice } from './utils.js';
-import { clearCanvas } from "./rendering.js";
+import { clearCanvas, toogleAutoDraw } from "./rendering.js";
+import { piecesIsEmpty } from './pieces.js';
 
 const buttonLogin = document.getElementById("button-login");
 const buttonLogout = document.getElementById("button-logout");
+const buttonAnimate = document.getElementById("button-animate");
 const buttonPublish = document.getElementById("button-publish");
 const buttonGallery = document.getElementById("button-gallery");
 const buttonCanvas = document.getElementById("button-canvas");
@@ -30,27 +32,43 @@ export function initUI() {
     // Eventos de botones
 
     buttonLogin.addEventListener("click", async (e) => {
+      posthog.capture('button_login_ok');
       try {
         await login();
         console.log("Usuario autenticado:", currentUser.displayName);
+        posthog.capture('button_login_ok');
         setLoginStateButtons();
       } catch (error) {
         console.error("Error al autenticar: ", error);
+        posthog.capture('button_login_ko');
       }
     });
     
+    buttonAnimate.addEventListener("click", (e) => {
+      //e.preventDefault();  // -->???
+      posthog.capture('button_animate');
+      if (piecesIsEmpty()) {
+        alert ("Nothing to animate yet!. Draw something first");
+      } else {
+        toogleAutoDraw();
+        redraw();
+      }
+    });    
+    
     buttonGallery.addEventListener("click", (e) => {
       //e.preventDefault();  // -->???
-      
+      posthog.capture('button_gallery');
       setUIModeGallery();
       renderGallery();
     });
 
     buttonCanvas.addEventListener("click", (e) => {
+      posthog.capture('button_canvas');
       setUIModeCanvas();  
     });
 
     buttonLogout.addEventListener("click", (e) => {
+      posthog.capture('button_logout');
       logout();
       localStorage.removeItem("user");
       setLoginStateButtons() ;
@@ -59,21 +77,25 @@ export function initUI() {
     
 
     buttonPublish.addEventListener("click", (e) => {    
+    posthog.capture('button_publish');
      saveSketch();
     });
     buttonSave.addEventListener("click", (e) => {    
+    posthog.capture('button_save');
      handleSave();
     });
     buttonLoad.addEventListener("click", (e) => {    
+    posthog.capture('button_load');
      handleLoad();
     });
     buttonClear.addEventListener("click", (e) => {    
+    posthog.capture('button_clear');
      clearCanvas();
     });
 
-    exampleImg1.addEventListener('click', () => loadAssetJSON ("example1.json"));
-    exampleImg2.addEventListener('click', () => loadAssetJSON ("example2.json"));
-    exampleImg3.addEventListener('click', () => loadAssetJSON ("example3.json"));
+    exampleImg1.addEventListener('click', () => { loadAssetJSON ("example1.json"); posthog.capture('button_example1');});
+    exampleImg2.addEventListener('click', () => { loadAssetJSON ("example2.json"); posthog.capture('button_example2');});
+    exampleImg3.addEventListener('click', () => { loadAssetJSON ("example3.json"); posthog.capture('button_example3');});
 
   if (isMobileDevice()) {
     textWarningMobile.textContent = "⚠️ Jengax is designed for desktop. Some features may not work well on mobile devices.";
@@ -102,6 +124,7 @@ export function initUI() {
 // ---- Menu states --------------
 export function setUIModeGallery() {
     gallery.classList.remove("hidden");
+    buttonAnimate.classList.add("hidden");
     buttonCanvas.classList.remove("hidden");
     buttonSave.classList.add("hidden");
     buttonLoad.classList.add("hidden");
@@ -114,6 +137,7 @@ export function setUIModeCanvas() {
     setLoginStateButtons();
     gallery.style.display = "none";
     //gallery.classList.add("hidden");
+    buttonAnimate.classList.remove("hidden");
     buttonCanvas.classList.add("hidden");
     buttonSave.classList.remove("hidden");
     buttonLoad.classList.remove("hidden");

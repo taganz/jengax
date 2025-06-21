@@ -21,6 +21,7 @@ function initScribble() {
 let autoDraw = false;
 let autoDrawCurrentPieceId;
 export function toogleAutoDraw(){
+  
   if (autoDraw) setAutoDrawOff();
   else setAutoDrawOn();
 }
