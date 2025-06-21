@@ -48,8 +48,9 @@ export function mousePressed() {
   if (mouseButton === RIGHT) {
     // Si hay una pieza bajo el cursor, la borra
     const index = getPieceIdUnderWorld(wx, wy);
+    console.log('intento borrar index: ', index);
     posthog.capture('input_delete');
-    if (index) { 
+    if (index != null) { 
       //console.log('Borrando pieza id: ', index, ' at ', wx, wy);
       deletePiece(index);
     }
