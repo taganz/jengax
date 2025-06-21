@@ -72,8 +72,8 @@ export function initUI() {
     });
 
     exampleImg1.addEventListener('click', () => loadAssetJSON ("example1.json"));
-    exampleImg2.addEventListener('click', console.log("pending loading 2"));
-    exampleImg3.addEventListener('click', console.log("pending loading 3"));
+    exampleImg2.addEventListener('click', () => loadAssetJSON ("example2.json"));
+    exampleImg3.addEventListener('click', () => loadAssetJSON ("example3.json"));
 
   if (isMobileDevice()) {
     textWarningMobile.textContent = "⚠️ Jengax is designed for desktop. Some features may not work well on mobile devices.";
