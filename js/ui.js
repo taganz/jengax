@@ -1,6 +1,6 @@
 // ui.js
 import { fetchSketchList, loadSketchById, deleteSketch, saveSketch } from "./firebase.js";
-import { handleSave, handleLoad, loadSketchFromGallery } from "./io.js";
+import { handleSave, handleLoad, loadSketchFromGallery, loadAssetJSON } from "./io.js";
 import { login, logout, currentUserId, currentUser } from "./auth.js";
 import { isMobileDevice } from './utils.js';
 import { clearCanvas } from "./rendering.js";
@@ -17,6 +17,9 @@ const textLoginToGallery = document.getElementById("msg-log-for-gallery");
 const gallery = document.getElementById("gallery");
 const userInfo = document.getElementById("logged-user");
 const textWarningMobile = document.getElementById("warning-mobile");
+const exampleImg1 = document.getElementById('example1');
+const exampleImg2 = document.getElementById('example2');
+const exampleImg3 = document.getElementById('example3');
 
 export function initUI() {
 
@@ -67,7 +70,11 @@ export function initUI() {
     buttonClear.addEventListener("click", (e) => {    
      clearCanvas();
     });
-    
+
+    exampleImg1.addEventListener('click', () => loadAssetJSON ("example1.json"));
+    exampleImg2.addEventListener('click', console.log("pending loading 2"));
+    exampleImg3.addEventListener('click', console.log("pending loading 3"));
+
   if (isMobileDevice()) {
     textWarningMobile.textContent = "⚠️ Jengax is designed for desktop. Some features may not work well on mobile devices.";
     textWarningMobile.style.cssText = `

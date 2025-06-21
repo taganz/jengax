@@ -83,3 +83,11 @@ export function loadSketchFromGallery(data) {
   loadPieces(data.pieces);  
   redraw();
 }
+
+export function loadAssetJSON (pathName) {
+    loadJSON(`assets/${pathName}`, data => {
+      handleFile({ subtype: 'json', data });
+    }, err => {
+      console.error('loadJSON failed', err);
+    });
+  }
