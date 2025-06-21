@@ -1,5 +1,5 @@
 // io.js
-import { pieces } from './pieces.js';
+import { pieces, loadPieces } from './pieces.js';
 import { viewScale, viewOffsetX, viewOffsetY, setCamera } from './camera.js';
 //import { fileInput } from './main.js';
 
@@ -54,8 +54,9 @@ export function handleFile(file) {
   const data = file.data;
   resizeCanvas(data.canvasWidth, data.canvasHeight);
   setCamera(data.viewScale, data.viewOffsetX, data.viewOffsetY);
-  pieces.splice(0, pieces.length, ...data.pieces);  // --> fer un setter i no exportar pieces[]
-  redraw();
+  loadPieces(data.pieces);  
+
+    redraw();
   // Reset the fileInput so you can load *the same* file again
   fileInput.elt.value = null;
 }
@@ -79,6 +80,6 @@ export function loadSketchFromGallery(data) {
     resizeCanvas(800, 600); 
     setCamera(1, 0, 0);
   }
-  pieces.splice(0, pieces.length, ...data.pieces);  // --> fer un setter i no exportar pieces[]
+  loadPieces(data.pieces);  
   redraw();
 }

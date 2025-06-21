@@ -12,6 +12,14 @@ export let piece_border   = 1;
 export let pieces = [];
 export let lastDeletedPiece = null;
 
+export function clearPieces() {
+  pieces.splice(0, pieces.length);  
+}
+
+export function loadPieces(piecesToLoad) {
+  pieces.splice(0, pieces.length, ...piecesToLoad);  
+}
+
 export function removeLastPiece() {
   lastDeletedPiece = null;
   if (pieces.length > 0) pieces.pop();

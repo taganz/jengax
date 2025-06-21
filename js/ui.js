@@ -3,6 +3,7 @@ import { fetchSketchList, loadSketchById, deleteSketch, saveSketch } from "./fir
 import { handleSave, handleLoad, loadSketchFromGallery } from "./io.js";
 import { login, logout, currentUserId, currentUser } from "./auth.js";
 import { isMobileDevice } from './utils.js';
+import { clearCanvas } from "./rendering.js";
 
 const buttonLogin = document.getElementById("button-login");
 const buttonLogout = document.getElementById("button-logout");
@@ -11,6 +12,7 @@ const buttonGallery = document.getElementById("button-gallery");
 const buttonCanvas = document.getElementById("button-canvas");
 const buttonSave = document.getElementById("button-save-file");
 const buttonLoad = document.getElementById("button-load-file");
+const buttonClear = document.getElementById("button-clear");
 const textLoginToGallery = document.getElementById("msg-log-for-gallery");
 const gallery = document.getElementById("gallery");
 const userInfo = document.getElementById("logged-user");
@@ -62,7 +64,9 @@ export function initUI() {
     buttonLoad.addEventListener("click", (e) => {    
      handleLoad();
     });
-
+    buttonClear.addEventListener("click", (e) => {    
+     clearCanvas();
+    });
     
   if (isMobileDevice()) {
     textWarningMobile.textContent = "⚠️ Jengax is designed for desktop. Some features may not work well on mobile devices.";
@@ -96,6 +100,7 @@ export function setUIModeGallery() {
     buttonLoad.classList.add("hidden");
     buttonGallery.classList.add("hidden");
     buttonPublish.classList.add("hidden");
+    buttonClear.classList.add("hidden");
         
 }
 export function setUIModeCanvas() {
@@ -105,6 +110,8 @@ export function setUIModeCanvas() {
     buttonCanvas.classList.add("hidden");
     buttonSave.classList.remove("hidden");
     buttonLoad.classList.remove("hidden");
+    buttonClear.classList.remove("hidden");
+
 }
 
 function setLoginStateButtons() {

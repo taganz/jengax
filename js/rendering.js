@@ -1,5 +1,5 @@
 // rendering.js
-import { pieces, piece_width, piece_border, getWorldXBounds } from './pieces.js';
+import { pieces, piece_width, piece_border, getWorldXBounds, clearPieces } from './pieces.js';
 import { qHeld } from './input.js';
 import { screenToWorldX, screenToWorldY, worldToScreenX, worldToScreenY } from './camera.js';
 import { viewScale, viewOffsetX, viewOffsetY } from './camera.js';
@@ -148,4 +148,10 @@ function drawPositionAtCursor() {
   let wx = screenToWorldX(mouseX), wy = screenToWorldY(mouseY);
   let label = `World: ${int(wx)}, ${int(wy)}, Screen: ${int(mouseX)}, ${int(mouseY)}`;
   drawTooltip(label, mouseX, mouseY);
+}
+
+export function clearCanvas() {
+  clearPieces();
+  background(background_color);
+  autoDraw = false;
 }
