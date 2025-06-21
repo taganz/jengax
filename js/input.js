@@ -122,14 +122,16 @@ export function keyReleased() {
 }
 
 export function handleZoom(event) {
-  // 1) stop the page from scrolling
+  // 1) stop the page from scrolling if the user scrolls over the canvas
   event.preventDefault();
 
   // 2) pick a zoom factor
-  const factor = event.deltaY < 0 ? 1.1 : 0.9;
+  //const sensitivity = 0.01;
+  //const zoomFactor = 1 - event.delta * sensitivity;
+  const zoomFactor = event.deltaY < 0 ? 1.03 : 0.97;
 
   // 3) apply it around the mouse cursor
-  zoomAt(event.clientX, event.clientY, factor);
+  zoomAt(event.clientX, event.clientY, zoomFactor);
  
   // 4) redraw the sketch
   redraw();

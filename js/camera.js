@@ -23,13 +23,15 @@ export function worldToScreenY(wy) {
   return height + viewOffsetY - wy * viewScale;
 }
 
-export function zoomAt(mouseX, mouseY, factor) {
-  const wx = screenToWorldX(mouseX);
-  const wy = screenToWorldY(mouseY);
-  viewScale *= factor;
-  viewOffsetX = mouseX - wx * viewScale;
-  // Invert the Y axis correction:
-  viewOffsetY = mouseY - (height - wy * viewScale);
+export function zoomAt(mouseX, mouseY, zoomFactor) {
+  // veure demo https://openprocessing.org/sketch/create
+  // Actualizar offsets antes de cambiar la escala
+  viewOffsetX = mouseX + (viewOffsetX - mouseX) * zoomFactor;
+  viewOffsetY = mouseY + (viewOffsetY - mouseY) * zoomFactor;
+  //viewOffsetY = - mouseY - height + (height + viewOffsetY - mouseY) * zoomFactor;
+  // Actualizar escala
+  viewScale *= zoomFactor;
+  
 }
 
 export function pan(dx, dy) {
