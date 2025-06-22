@@ -6,6 +6,11 @@ import { isMobileDevice } from './utils.js';
 import { clearCanvas, toogleAutoDraw } from "./rendering.js";
 import { piecesIsEmpty } from './pieces.js';
 
+
+export let inputMode = 'desktop'; // o 'touch'
+
+
+
 const buttonLogin = document.getElementById("button-login");
 const buttonLogout = document.getElementById("button-logout");
 const buttonAnimate = document.getElementById("button-animate");
@@ -28,11 +33,12 @@ export function initUI() {
     // two UI modes: Gallery and Canvas
     setUIModeCanvas();
     
-
-    // Eventos de botones
+    if (isMobileDevice()) {
+      inputMode = 'touch';
+    }
+    console.log(`${inputMode} mode`);
 
     buttonLogin.addEventListener("click", async (e) => {
-      posthog.capture('button_login_ok');
       try {
         await login();
         console.log("Usuario autenticado:", currentUser.displayName);
@@ -93,12 +99,22 @@ export function initUI() {
      clearCanvas();
     });
 
-    exampleImg1.addEventListener('click', () => { loadAssetJSON ("example1.json"); posthog.capture('button_example1');});
-    exampleImg2.addEventListener('click', () => { loadAssetJSON ("example2.json"); posthog.capture('button_example2');});
-    exampleImg3.addEventListener('click', () => { loadAssetJSON ("example3.json"); posthog.capture('button_example3');});
+    exampleImg1.addEventListener('click', () => { 
+      loadAssetJSON ("example1.json"); 
+      posthog.capture('button_example1');
+    });
+    exampleImg2.addEventListener('click', () => { 
+      loadAssetJSON ("example2.json"); 
+      posthog.capture('button_example2');
+    });
+    exampleImg3.addEventListener('click', () => { 
+      loadAssetJSON ("example3.json"); 
+      posthog.capture('button_example3');
+    });
 
   if (isMobileDevice()) {
-    textWarningMobile.textContent = "⚠️ Jengax is designed for desktop. Some features may not work well on mobile devices.";
+    //textWarningMobile.textContent = "⚠️ Jengax is designed for desktop. Some features may not work well on mobile devices.";
+    textWarningMobile.textContent = "⚠️ Mobile version in beta";
     textWarningMobile.style.cssText = `
       background: #fdd;
       color: #900;

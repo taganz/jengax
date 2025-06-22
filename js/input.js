@@ -4,8 +4,7 @@ import { piece_width,
       getPieceIdUnderWorld,
       restoreLastDeletedPiece,
       removeLastPiece,
-      addHorizontalPieceIfPossible,
-      drawVerticalPiece
+      addPiece
       } from './pieces.js';
 import { zoomAt, pan } from './camera.js';
 import { handleSave, handleLoad } from './io.js';
@@ -13,6 +12,7 @@ import { snapToGrid } from './main.js';
 import { screenToWorldX, screenToWorldY } from './camera.js';
 import { logCursorPosition } from './utils.js';
 import { setDrawModeHand, setDrawModeSolid, toogleAutoDraw } from './rendering.js';
+import { inputMode } from './ui.js';
 
 let isDragging = false;
 let lastMouseX = 0;
@@ -22,12 +22,14 @@ export let qHeld;
 
 
 function mouseIsInsideCanvas() {
+  if (inputMode == 'touch') return;
   return mouseX >= 0 &&
          mouseX <= width &&
          mouseY >= 0 &&
          mouseY <= height;
 }
 export function mousePressed() {
+  if (inputMode == 'touch') return;
   if (!mouseIsInsideCanvas()) return;  // ignore clicks off-canvas
 
   if (mouseButton === CENTER || (mouseButton === LEFT && keyIsDown(SHIFT))) {
@@ -68,25 +70,19 @@ export function mousePressed() {
     return;
   }
   
-  posthog.capture('input_add');
 
-  if (addHorizontalPieceIfPossible(wx, wy)) {
-    posthog.capture('input_add_horizontal');
-    redraw();
-    return;
-  }
-
-  posthog.capture('input_add_vertical');
-  drawVerticalPiece(wx, wy);
+  addPiece(wx, wy);
   redraw();
   return;
 }
 
 export function mouseReleased() {
+ if (inputMode == 'touch') return;
   isDragging = false;
 }
 
 export function mouseDragged() {
+  if (inputMode == 'touch') return;
   if (isDragging) {
     pan(mouseX - lastMouseX, mouseY - lastMouseY);
     lastMouseX = mouseX;  
@@ -96,6 +92,7 @@ export function mouseDragged() {
 }
 
 export function keyPressed() {
+  if (inputMode == 'touch') return;
   // save state to file
   if (key==='S'||key==='s') { handleSave();   posthog.capture('input_save'); return; }
   // load state from file
@@ -119,10 +116,14 @@ export function keyPressed() {
 }
 
 export function keyReleased() {
+  if (inputMode == 'touch') return;
   if (key==='Q'||key==='q') { qHeld=false; loop(); }
 }
 
 export function handleZoom(event) {
+
+  if (inputMode == 'touch') return;
+
   // 1) stop the page from scrolling if the user scrolls over the canvas
   event.preventDefault();
 

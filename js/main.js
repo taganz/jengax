@@ -6,7 +6,7 @@ import { mousePressed, mouseReleased, mouseDragged }  from './input.js';
 import { keyPressed, keyReleased, handleZoom }   from './input.js';
 import { handleFile, setFileInput } from './io.js';
 import { initUI } from './ui.js';
-
+import { touchEnded, touchMoved, touchStarted } from './inputMobile.js';
 
 export let cnv; // p5.js canvas element
 export const snapToGrid = true; 
@@ -14,7 +14,8 @@ export const snapToGrid = true;
 
 // ─── p5.js setup & draw ─────────────────────────────────────────────────
 export function setup() {
-  cnv = createCanvas(800, 600);
+
+  createCanvasAdaptedToWindow();
   noLoop();
 
   initUI();
@@ -32,17 +33,34 @@ export function setup() {
   setFileInput(createFileInput(handleFile));
 }
 
+function createCanvasAdaptedToWindow() {
+  let canvasWidth = min(800, windowWidth);
+  let canvasHeight = min(600, windowHeight);
+  console.log(`canvas created: ${canvasWidth}x${canvasHeight}`);
+  cnv = createCanvas(canvasWidth, canvasHeight);
+}
+
+function windowResized() {
+  let canvasWidth = min(800, windowWidth);
+  let canvasHeight = min(600, windowHeight);
+  console.log(`canvas resized: ${canvasWidth}x${canvasHeight}`);
+  cnv = resizeCanvas(canvasWidth, canvasHeight);
+}
 // Bind p5’s globals
 // p5js espera trobar els callbacks en window i ho posem com modul no ho troba
 
 window.setup        = setup;
 window.draw         = p5draw;
+window.windowResized  = windowResized;
 window.mousePressed = mousePressed;
 window.mouseReleased = mouseReleased;
 window.mouseDragged = mouseDragged;
 //window.mouseWheel   = mouseWheel;
 window.keyPressed   = keyPressed;
 window.keyReleased  = keyReleased;
+window.touchStarted = touchStarted;
+window.touchMoved = touchMoved;
+window.touchEnded = touchEnded;
 
 
 // --> no se qui fa servir aixo

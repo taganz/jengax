@@ -12,6 +12,17 @@ export let piece_border   = 1;
 export let pieces = [];
 export let lastDeletedPiece = null;
 
+
+export function addPiece(wx, wy) {
+
+  if (addHorizontalPieceIfPossible(wx, wy)) {
+    posthog.capture('input_add_horizontal');
+  } else {  
+    posthog.capture('input_add_vertical');
+    drawVerticalPiece(wx, wy);
+  }
+}
+
 export function piecesIsEmpty() {
   return pieces.length == 0;
 }
@@ -132,7 +143,7 @@ export function getHorizontalSupport(x, y, piece_width, piece_sizes) {
   return null;
 }
 
-export function addHorizontalPieceIfPossible(wx, wy) {
+function addHorizontalPieceIfPossible(wx, wy) {
   const horizontal = getHorizontalSupport(wx, wy, piece_width, piece_sizes);
   if (horizontal) {
     const cX = (horizontal.left.x + horizontal.right.x) / 2; // centro entre los dos soportes 
@@ -145,7 +156,7 @@ export function addHorizontalPieceIfPossible(wx, wy) {
   return false;
 }
 
-export function drawVerticalPiece(wx, wy) {
+function drawVerticalPiece(wx, wy) {
   let support = getHighestPieceBelow(wx, wy);
     // el top de la peça que te a sota
     let baseY   = support
