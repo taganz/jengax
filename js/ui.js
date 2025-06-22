@@ -5,7 +5,7 @@ import { login, logout, currentUserId, currentUser } from "./auth.js";
 import { isMobileDevice } from './utils.js';
 import { clearCanvas, toogleAutoDraw } from "./rendering.js";
 import { piecesIsEmpty } from './pieces.js';
-
+import { touchMoved } from "./inputMobile.js";
 
 export let inputMode = 'desktop'; // o 'touch'
 
@@ -111,6 +111,8 @@ export function initUI() {
       loadAssetJSON ("example3.json"); 
       posthog.capture('button_example3');
     });
+
+    canvas.addEventListener('touchmove', touchMoved, { passive: false });
 
   if (isMobileDevice()) {
     //textWarningMobile.textContent = "⚠️ Jengax is designed for desktop. Some features may not work well on mobile devices.";

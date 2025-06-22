@@ -21,8 +21,36 @@ export function touchStarted() {
   lastTouches = [...touches];
 }
 
-export function touchMoved() {
+export function touchEnded() {
+if (inputMode == 'desktop') return;
+  clearTimeout(tapTimer);
+
+
+    const wx = screenToWorldX(mouseX);
+    const wy = screenToWorldY(mouseY);
+
+  if (touches.length === 0 && longPressDetected) {
+      // longPress - delete piece
+    const index = getPieceIdUnderWorld(wx, wy);
+    if (index != null) {
+        deletePiece(index);
+    } else {
+        removeLastPiece();
+    }
+  }
+  else {    
+       addPiece(wx, wy);
+  }
+  redraw();
+
+  lastTouches = [...touches];
+  longPressDetected = false;
+}
+
+
+export function touchMoved(event) {
   if (inputMode == 'desktop') return;
+  event.preventDefault(); // evita que el navegador faci zoom/pan del document
   clearTimeout(tapTimer);
 
   if (touches.length === 2) {
@@ -48,30 +76,4 @@ export function touchMoved() {
     lastTouches = [...touches];
     redraw();
   }
-}
-
-export function touchEnded() {
-if (inputMode == 'desktop') return;
-  clearTimeout(tapTimer);
-
-
-    const wx = screenToWorldX(mouseX);
-    const wy = screenToWorldY(mouseY);
-
-  if (touches.length === 0 && longPressDetected) {
-      // longPress - delete piece
-    const index = getPieceIdUnderWorld(wx, wy);
-    if (index != null) {
-        deletePiece(index);
-    } else {
-        removeLastPiece();
-    }
-  }
-  else {    
-       addPiece(wx, wy);
-  }
-  redraw();
-
-  lastTouches = [...touches];
-  longPressDetected = false;
 }
