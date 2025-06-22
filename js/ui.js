@@ -112,7 +112,8 @@ export function initUI() {
       posthog.capture('button_example3');
     });
 
-    canvas.addEventListener('touchmove', touchMoved, { passive: false });
+   // prevent moving screen in touch 
+   //  canvas.addEventListener('touchmove', touchMoved, { passive: false });
 
   if (isMobileDevice()) {
     //textWarningMobile.textContent = "⚠️ Jengax is designed for desktop. Some features may not work well on mobile devices.";
@@ -190,11 +191,22 @@ export async function renderGallery() {
   
   //setUIModeGallery();
 
-  gallery.innerHTML = ""; // limpia antes de pintar
-  gallery.style.display = "grid";
+  gallery.innerHTML = "<strong>Loading gallery...<strong>"; 
+  // --> canviar color
+  gallery.style.cssText = `
+    background: #fdd;
+    color: #900;
+    padding: 12px;
+    text-align: center;
+    font-family: sans-serif;
+    font-size: 14px;
+    z-index: 1000;
+  `;
 
   const list = await fetchSketchList();
-
+  gallery.innerHTML = ""; // limpia antes de pintar
+  gallery.style.display = "grid";
+  
   if (list.length === 0) {
     gallery.textContent = "No sketches stored.";
     return;

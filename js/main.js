@@ -44,7 +44,7 @@ function windowResized() {
   let canvasWidth = min(800, windowWidth);
   let canvasHeight = min(600, windowHeight);
   console.log(`canvas resized: ${canvasWidth}x${canvasHeight}`);
-  cnv = resizeCanvas(canvasWidth, canvasHeight);
+  resizeCanvas(canvasWidth, canvasHeight);
 }
 // Bind p5’s globals
 // p5js espera trobar els callbacks en window i ho posem com modul no ho troba
@@ -59,7 +59,7 @@ window.mouseDragged = mouseDragged;
 window.keyPressed   = keyPressed;
 window.keyReleased  = keyReleased;
 window.touchStarted = touchStarted;
-window.touchMoved = touchMoved;
+//window.touchMoved = touchMoved;
 window.touchEnded = touchEnded;
 
 
