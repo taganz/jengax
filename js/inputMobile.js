@@ -28,6 +28,10 @@ if (inputMode == 'desktop') return;
 
     const wx = screenToWorldX(mouseX);
     const wy = screenToWorldY(mouseY);
+    if (snapToGrid) {
+        wx = Math.round(wx / piece_width) * piece_width;
+        wy = Math.round(wy / piece_width) * piece_width;
+    }
 
   if (touches.length === 0 && longPressDetected) {
       // longPress - delete piece
@@ -47,7 +51,7 @@ if (inputMode == 'desktop') return;
   longPressDetected = false;
 }
 
-
+// --> doesn't work!!
 export function touchMoved(event) {
   if (inputMode == 'desktop') return;
   event.preventDefault(); // evita que el navegador faci zoom/pan del document
