@@ -2,8 +2,9 @@
 // Mobile-friendly input: tap to place, long press to delete, pinch-to-zoom, two-finger pan
 
 import { screenToWorldX, screenToWorldY, zoomAt, viewOffsetX, viewOffsetY } from './camera.js';
-import { getPieceIdUnderWorld, removeLastPiece, deletePiece, addPiece } from './pieces.js';
+import { piece_width, getPieceIdUnderWorld, removeLastPiece, deletePiece, addPiece } from './pieces.js';
 import { inputMode } from './ui.js';
+import { snapToGrid } from './main.js';
 
 let isDragging = false;
 let lastTouches = [];
@@ -26,8 +27,8 @@ if (inputMode == 'desktop') return;
   clearTimeout(tapTimer);
 
 
-    const wx = screenToWorldX(mouseX);
-    const wy = screenToWorldY(mouseY);
+    let wx = screenToWorldX(mouseX);
+    let wy = screenToWorldY(mouseY);
     if (snapToGrid) {
         wx = Math.round(wx / piece_width) * piece_width;
         wy = Math.round(wy / piece_width) * piece_width;
