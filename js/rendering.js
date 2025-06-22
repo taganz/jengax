@@ -156,3 +156,32 @@ export function clearCanvas() {
   background(background_color);
   autoDraw = false;
 }
+
+/**
+ * Returns a scaled PNG data URL of the canvas with max width or height = maxSize
+ * @param {number} maxSize - Maximum width or height in pixels
+ * @returns {string} - A base64 PNG string
+ */
+export function getScaledImagePNG(maxSize) {
+  // 1. Get the original canvas
+  const originalCanvas = document.querySelector('canvas');
+  const ow = originalCanvas.width;
+  const oh = originalCanvas.height;
+
+  // 2. Calculate scaled dimensions
+  const scale = Math.min(1, maxSize / Math.max(ow, oh));
+  const sw = ow * scale;
+  const sh = oh * scale;
+
+  // 3. Create an offscreen canvas
+  const tempCanvas = document.createElement('canvas');
+  tempCanvas.width = sw;
+  tempCanvas.height = sh;
+  const ctx = tempCanvas.getContext('2d');
+
+  // 4. Draw scaled content
+  ctx.drawImage(originalCanvas, 0, 0, sw, sh);
+
+  // 5. Return PNG data URL
+  return tempCanvas.toDataURL('image/png');
+}

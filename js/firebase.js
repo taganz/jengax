@@ -14,7 +14,7 @@ import { cnv } from "./main.js";
 import { pieces } from "./pieces.js";
 import { currentUser } from "./auth.js";
 import { viewScale, viewOffsetX, viewOffsetY} from "./camera.js";
-
+import { getScaledImagePNG } from './rendering.js';
 
 /**
  * Guarda `sketchToSave` en Firestore en la colección "jengax-sketch".
@@ -35,7 +35,8 @@ export async function saveSketch() {
       user : currentUser ? currentUser.uid : null,
       userDisplayName : currentUser ? currentUser.displayName : null,
       sketchName : prompt("Nombre del sketch:"),
-      sketchImage : cnv.elt.toDataURL("image/png"), // Captura la imagen del canvas
+      //sketchImage : cnv.elt.toDataURL("image/png"), // Captura la imagen del canvas
+      sketchImage : getScaledImagePNG(300),
       sketchDate : new Date().toLocaleDateString(),
       sketchTime : new Date().toLocaleTimeString(),
       renderStatus : {
