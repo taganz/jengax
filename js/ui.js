@@ -122,7 +122,7 @@ export function initUI() {
 
   if (isMobileDevice()) {
     //textWarningMobile.textContent = "⚠️ Jengax is designed for desktop. Some features may not work well on mobile devices.";
-    textWarningMobile.textContent = "⚠️ Mobile version in beta";
+    textWarningMobile.textContent = "⚠️ Jengax is optimized for desktop.";
     textWarningMobile.style.cssText = `
       background: #fdd;
       color: #900;
