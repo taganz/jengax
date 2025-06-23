@@ -21,6 +21,18 @@ export function addPiece(wx, wy) {
     posthog.capture('input_add_vertical');
     drawVerticalPiece(wx, wy);
   }
+  lastDeletedPiece = null;
+}
+
+export function undoPiece() {
+  posthog.capture('input_undo');
+  if (lastDeletedPiece != null) {
+     restoreLastDeletedPiece();
+  }
+  else {
+    removeLastPiece(); 
+  }
+  redraw();
 }
 
 export function piecesIsEmpty() {
@@ -41,6 +53,7 @@ export function removeLastPiece() {
   redraw();
 }
 export function deletePiece(index) {
+  posthog.capture('input_delete');
   lastDeletedPiece = pieces[index];
   pieces.splice(index,1);
 
@@ -59,19 +72,11 @@ export function getPieceIdUnderWorld(wx, wy) {
   return null;
 }
 
-export function restoreLastDeletedPiece(wx, wy) {
+function restoreLastDeletedPiece() {
   if (!lastDeletedPiece) return false;
-  const p = lastDeletedPiece;
-  const left = p.x - p.width/2;
-  const right = p.x + p.width/2;
-  const top = p.y - p.height/2;
-  const bottom = p.y + p.height/2;
+  pieces.push(lastDeletedPiece);
   lastDeletedPiece = null;
-  if (wx >= left && wx <= right && wy >= top && wy <= bottom) {
-    pieces.push(p);
-    return true;
-  }
-  return false;
+  return;
 }
 
 export function getHighestPieceBelow(x, y) {

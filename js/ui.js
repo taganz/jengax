@@ -4,8 +4,8 @@ import { handleSave, handleLoad, loadSketchFromGallery, loadAssetJSON } from "./
 import { login, logout, currentUserId, currentUser } from "./auth.js";
 import { isMobileDevice } from './utils.js';
 import { clearCanvas, toogleAutoDraw } from "./rendering.js";
-import { piecesIsEmpty } from './pieces.js';
-import { touchMoved } from "./inputMobile.js";
+import { piecesIsEmpty, undoPiece} from './pieces.js';
+//import { touchMoved } from "./inputMobile.js";
 
 export let inputMode = 'desktop'; // o 'touch'
 
@@ -20,6 +20,7 @@ const buttonCanvas = document.getElementById("button-canvas");
 const buttonSave = document.getElementById("button-save-file");
 const buttonLoad = document.getElementById("button-load-file");
 const buttonClear = document.getElementById("button-clear");
+const buttonUndo = document.getElementById("button-undo");
 const textLoginToGallery = document.getElementById("msg-log-for-gallery");
 const gallery = document.getElementById("gallery");
 const userInfo = document.getElementById("logged-user");
@@ -97,6 +98,10 @@ export function initUI() {
     buttonClear.addEventListener("click", (e) => {    
     posthog.capture('button_clear');
      clearCanvas();
+    });    
+    buttonUndo.addEventListener("click", (e) => {    
+    posthog.capture('button_undo');
+     undoPiece();
     });
 
     exampleImg1.addEventListener('click', () => { 
@@ -150,6 +155,7 @@ export function setUIModeGallery() {
     buttonGallery.classList.add("hidden");
     buttonPublish.classList.add("hidden");
     buttonClear.classList.add("hidden");
+    buttonUndo.classList.add("hidden");
         
 }
 export function setUIModeCanvas() {
@@ -161,6 +167,7 @@ export function setUIModeCanvas() {
     buttonSave.classList.remove("hidden");
     buttonLoad.classList.remove("hidden");
     buttonClear.classList.remove("hidden");
+    buttonUndo.classList.remove("hidden");
 
 }
 

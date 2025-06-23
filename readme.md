@@ -10,8 +10,7 @@ Users can place vertical and horizontal rectangular pieces based on specific sup
 
 ## 🎮 Click to Sketch!
 
-- Left-click or short tap to **place a piece** at the clicked position.
-- Right-click or long tap to **remove** a specific piece or undo last piece addition
+- Left-click or tap to **place** o **remove** pieces.
 - Vertical pieces rest on the ground or on the top of other pieces.
 - **Horizontal pieces** can only be placed if two supporting vertical pieces are aligned and close enough.
 
@@ -22,6 +21,7 @@ Users can place vertical and horizontal rectangular pieces based on specific sup
 
 - **Draw modes**: Press "1" for hand drawn and "2" for solid.
 - Press "A" to **autodraw** current sketch.
+- Right-click to **undo**.
 
 ## I/O
 

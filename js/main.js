@@ -6,7 +6,7 @@ import { mousePressed, mouseReleased, mouseDragged }  from './input.js';
 import { keyPressed, keyReleased, handleZoom }   from './input.js';
 import { handleFile, setFileInput } from './io.js';
 import { initUI } from './ui.js';
-import { touchEnded, touchMoved, touchStarted } from './inputMobile.js';
+import { touchEnded, touchStarted } from './inputMobile.js';
 
 export let cnv; // p5.js canvas element
 export const snapToGrid = true; 

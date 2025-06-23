@@ -2,8 +2,7 @@
 import { piece_width, 
       deletePiece,
       getPieceIdUnderWorld,
-      restoreLastDeletedPiece,
-      removeLastPiece,
+      undoPiece,
       addPiece
       } from './pieces.js';
 import { zoomAt, pan } from './camera.js';
@@ -22,12 +21,12 @@ export let qHeld;
 
 
 function mouseIsInsideCanvas() {
-  if (inputMode == 'touch') return;
   return mouseX >= 0 &&
          mouseX <= width &&
          mouseY >= 0 &&
          mouseY <= height;
 }
+
 export function mousePressed() {
   if (inputMode == 'touch') return;
   if (!mouseIsInsideCanvas()) return;  // ignore clicks off-canvas
@@ -48,32 +47,21 @@ export function mousePressed() {
   }
   // borrar piezas
   if (mouseButton === RIGHT) {
-    // Si hay una pieza bajo el cursor, la borra
-    const index = getPieceIdUnderWorld(wx, wy);
-    //console.log('intento borrar index: ', index);
-    posthog.capture('input_delete');
-    if (index != null) { 
-      //console.log('Borrando pieza id: ', index, ' at ', wx, wy);
-      deletePiece(index);
-    }
-    else {
-      // si no borra la ultima dibujada
-      //console.log(`Borrando ultima pieza dibujada at `);
-      removeLastPiece(); 
-    }
-    redraw(); 
+    undoPiece();
+    redraw();
     return false;
   }
-  if (restoreLastDeletedPiece(wx, wy)) {
-    posthog.capture('input_restore');
-    redraw();
-    return;
-  }
-  
 
-  addPiece(wx, wy);
+  // Si hay una pieza bajo el cursor, la borra
+  const index = getPieceIdUnderWorld(wx, wy);
+  if (index != null) { 
+    deletePiece(index);
+  } 
+  else {
+    addPiece(wx, wy);
+  }
   redraw();
-  return;
+  return false;
 }
 
 export function mouseReleased() {

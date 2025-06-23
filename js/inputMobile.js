@@ -11,8 +11,16 @@ let lastTouches = [];
 let tapTimer = null;
 let longPressDetected = false;
 
+function mouseIsInsideCanvas() {
+  return mouseX >= 0 &&
+         mouseX <= width &&
+         mouseY >= 0 &&
+         mouseY <= height;
+}
+
 export function touchStarted() {
   if (inputMode == 'desktop') return;
+  if (!mouseIsInsideCanvas()) { console.log('touch outside canvas');return};  // ignore clicks off-canvas
   if (touches.length === 1) {
     tapTimer = setTimeout(() => {
       longPressDetected = true;
@@ -20,38 +28,44 @@ export function touchStarted() {
     longPressDetected = false;
   }
   lastTouches = [...touches];
+  return false;
 }
 
 export function touchEnded() {
 if (inputMode == 'desktop') return;
+if (!mouseIsInsideCanvas()) { console.log('touch outside canvas');return};  // ignore clicks off-canvas
+
   clearTimeout(tapTimer);
 
 
-    let wx = screenToWorldX(mouseX);
-    let wy = screenToWorldY(mouseY);
-    if (snapToGrid) {
-        wx = Math.round(wx / piece_width) * piece_width;
-        wy = Math.round(wy / piece_width) * piece_width;
-    }
+  let wx = screenToWorldX(mouseX);
+  let wy = screenToWorldY(mouseY);
+  if (snapToGrid) {
+      wx = Math.round(wx / piece_width) * piece_width;
+      wy = Math.round(wy / piece_width) * piece_width;
+  }
+  const index = getPieceIdUnderWorld(wx, wy);
 
   if (touches.length === 0 && longPressDetected) {
-      // longPress - delete piece
-    const index = getPieceIdUnderWorld(wx, wy);
-    if (index != null) {
-        deletePiece(index);
-    } else {
-        removeLastPiece();
-    }
+      // long tap
   }
   else {    
+    // short tap
+    if (index != null) {
+        deletePiece(index);
+    }
+    else {
        addPiece(wx, wy);
+    }
   }
   redraw();
 
   lastTouches = [...touches];
   longPressDetected = false;
+  return false;
 }
 
+/*
 // --> doesn't work!!
 export function touchMoved(event) {
   if (inputMode == 'desktop') return;
@@ -82,3 +96,4 @@ export function touchMoved(event) {
     redraw();
   }
 }
+*/
