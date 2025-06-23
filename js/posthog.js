@@ -1,3 +1,5 @@
+import { jengax_version } from "./main";
+
 export function posthogInitUser() {
     // 1. Asegúrate de que PostHog ya esté inicializado
   if (!window.posthog) {
@@ -17,7 +19,7 @@ export function posthogInitUser() {
 
   // 4. (Opcional) Añadir propiedades del usuario
   posthog.people.set({
-    jengax_version: '1.0.2',
+    jengax_version: jengax_version,
     idioma: navigator.language,
     first_visit: !localStorage.getItem('jengax_first_visit') ? true : false
   });

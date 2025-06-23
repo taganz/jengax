@@ -9,6 +9,8 @@ import { initUI } from './ui.js';
 import { touchEnded, touchStarted } from './inputMobile.js';
 import { posthogInitUser } from './posthog.js';
 
+export const jengax_version = '1.0.2';
+
 export let cnv; // p5.js canvas element
 export const snapToGrid = true; 
 
