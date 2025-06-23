@@ -7,6 +7,7 @@ import { keyPressed, keyReleased, handleZoom }   from './input.js';
 import { handleFile, setFileInput } from './io.js';
 import { initUI } from './ui.js';
 import { touchEnded, touchStarted } from './inputMobile.js';
+import { posthogInitUser } from './posthog.js';
 
 export let cnv; // p5.js canvas element
 export const snapToGrid = true; 
@@ -19,6 +20,7 @@ export function setup() {
   noLoop();
 
   initUI();
+  posthogInitUser();
 
   // Prevent right-click menu
   let cnv2 = document.querySelector('canvas');   // cnv es un p5.Element
