@@ -15,11 +15,11 @@ export let lastDeletedPiece = null;
 
 export function addPiece(wx, wy) {
 
-  if (addHorizontalPieceIfPossible(wx, wy)) {
+  if (_addHorizontalPieceIfPossible(wx, wy)) {
     posthog.capture('input_add_horizontal');
   } else {  
     posthog.capture('input_add_vertical');
-    drawVerticalPiece(wx, wy);
+    _drawVerticalPiece(wx, wy);
   }
   lastDeletedPiece = null;
 }
@@ -27,10 +27,10 @@ export function addPiece(wx, wy) {
 export function undoPiece() {
   posthog.capture('input_undo');
   if (lastDeletedPiece != null) {
-     restoreLastDeletedPiece();
+     _restoreLastDeletedPiece();
   }
   else {
-    removeLastPiece(); 
+    _removeLastPiece(); 
   }
   redraw();
 }
@@ -47,7 +47,7 @@ export function loadPieces(piecesToLoad) {
   pieces.splice(0, pieces.length, ...piecesToLoad);  
 }
 
-export function removeLastPiece() {
+function _removeLastPiece() {
   lastDeletedPiece = null;
   if (pieces.length > 0) pieces.pop();
   redraw();
@@ -72,7 +72,7 @@ export function getPieceIdUnderWorld(wx, wy) {
   return null;
 }
 
-function restoreLastDeletedPiece() {
+function _restoreLastDeletedPiece() {
   if (!lastDeletedPiece) return false;
   pieces.push(lastDeletedPiece);
   lastDeletedPiece = null;
@@ -100,7 +100,7 @@ export function getHighestPieceBelow(x, y) {
   return best;
 }
 
-export function getHorizontalSupport(x, y, piece_width, piece_sizes) {
+function _getHorizontalSupport(x, y, piece_width, piece_sizes) {
   const maxDist = piece_width * piece_sizes[piece_sizes.length - 1];
   let leftSup = null, rightSup = null;
   let bestTopLeft = -Infinity, bestTopRight = -Infinity;
@@ -148,8 +148,8 @@ export function getHorizontalSupport(x, y, piece_width, piece_sizes) {
   return null;
 }
 
-function addHorizontalPieceIfPossible(wx, wy) {
-  const horizontal = getHorizontalSupport(wx, wy, piece_width, piece_sizes);
+function _addHorizontalPieceIfPossible(wx, wy) {
+  const horizontal = _getHorizontalSupport(wx, wy, piece_width, piece_sizes);
   if (horizontal) {
     const cX = (horizontal.left.x + horizontal.right.x) / 2; // centro entre los dos soportes 
     const tY = horizontal.left.y + horizontal.left.height / 2; // top Y de los soportes
@@ -161,7 +161,7 @@ function addHorizontalPieceIfPossible(wx, wy) {
   return false;
 }
 
-function drawVerticalPiece(wx, wy) {
+function _drawVerticalPiece(wx, wy) {
   let support = getHighestPieceBelow(wx, wy);
     // el top de la peça que te a sota
     let baseY   = support

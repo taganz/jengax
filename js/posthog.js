@@ -1,6 +1,5 @@
-import { jengax_version } from "./main";
 
-export function posthogInitUser() {
+export function posthogInitUser(jengax_version) {
     // 1. Asegúrate de que PostHog ya esté inicializado
   if (!window.posthog) {
     console.error("PostHog no está cargado.");

@@ -22,7 +22,7 @@ export function setup() {
   noLoop();
 
   initUI();
-  posthogInitUser();
+  posthogInitUser(jengax_version);
 
   // Prevent right-click menu
   let cnv2 = document.querySelector('canvas');   // cnv es un p5.Element
