@@ -1,7 +1,6 @@
 // input.js
 import { piece_width, 
       deletePiece,
-      getPieceIdUnderWorld,
       undoPiece,
       addPiece
       } from './pieces.js';
@@ -53,11 +52,8 @@ export function mousePressed() {
   }
 
   // Si hay una pieza bajo el cursor, la borra
-  const index = getPieceIdUnderWorld(wx, wy);
-  if (index != null) { 
-    deletePiece(index);
-  } 
-  else {
+  const deletedPiece = deletePiece(wx, wy);
+  if (!deletedPiece) {
     addPiece(wx, wy);
   }
   redraw();

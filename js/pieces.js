@@ -4,22 +4,30 @@
 import { getMinSizeToCover } from './utils.js';
 
 
-export let piece_width    = 20;
-export let piece_sizes    = [1, 2, 3, 5, 8, 13];
-export let piece_border   = 1;
+export const piece_width    = 20;
+export const piece_sizes    = [1, 2, 3, 5, 8, 13];
+export const piece_border   = 1;
 
 
-export let pieces = [];
+export const pieces = [];
 export let lastDeletedPiece = null;
 
 
 export function addPiece(wx, wy) {
 
-  if (_addHorizontalPieceIfPossible(wx, wy)) {
+  let phori = _getPotentialHorizontalPiece(wx, wy);
+  if (phori) {
+    pieces.push(phori);
     posthog.capture('input_add_horizontal');
   } else {  
-    posthog.capture('input_add_vertical');
-    _drawVerticalPiece(wx, wy);
+    let pvert = _getPotentialVerticalPiece(wx, wy);
+    if (pvert) {
+      posthog.capture('input_add_vertical');
+      pieces.push(pvert);
+    } else {
+      posthog.capture('error_pieces_no_potential_pieces')
+      console.log("No potencial pieces at addPiece???");
+    }
   }
   lastDeletedPiece = null;
 }
@@ -52,13 +60,18 @@ function _removeLastPiece() {
   if (pieces.length > 0) pieces.pop();
   redraw();
 }
-export function deletePiece(index) {
-  posthog.capture('input_delete');
-  lastDeletedPiece = pieces[index];
-  pieces.splice(index,1);
 
+export function deletePiece(wx, wy) {
+  const index = _getPieceIdUnderWorld(wx, wy);
+  if (index != null) { 
+    posthog.capture('input_delete');
+    lastDeletedPiece = pieces[index];
+   pieces.splice(index,1);
+  }
+  return (index != null);
 }
-export function getPieceIdUnderWorld(wx, wy) {
+
+export function _getPieceIdUnderWorld(wx, wy) {
   for (let i = pieces.length - 1; i >= 0; i--) {
     const p = pieces[i];
     const left = p.x - p.width/2;
@@ -100,7 +113,8 @@ export function getHighestPieceBelow(x, y) {
   return best;
 }
 
-function _getHorizontalSupport(x, y, piece_width, piece_sizes) {
+// return two pieces that can be the support for an horizontal one
+export function _getHorizontalSupport(x, y) {
   const maxDist = piece_width * piece_sizes[piece_sizes.length - 1];
   let leftSup = null, rightSup = null;
   let bestTopLeft = -Infinity, bestTopRight = -Infinity;
@@ -148,20 +162,23 @@ function _getHorizontalSupport(x, y, piece_width, piece_sizes) {
   return null;
 }
 
-function _addHorizontalPieceIfPossible(wx, wy) {
-  const horizontal = _getHorizontalSupport(wx, wy, piece_width, piece_sizes);
+export function _getHorizontalFromSupport(pleft, pright) {
+
+}
+export function _getPotentialHorizontalPiece(wx, wy) {
+  const horizontal = _getHorizontalSupport(wx, wy);
   if (horizontal) {
     const cX = (horizontal.left.x + horizontal.right.x) / 2; // centro entre los dos soportes 
     const tY = horizontal.left.y + horizontal.left.height / 2; // top Y de los soportes
     const w = Math.abs(horizontal.right.x - horizontal.left.x) + 2 * piece_width;
     const h = piece_width;
-    pieces.push({ x: cX, y: tY + h / 2, width: w, height: h, horizontal: true });
-    return true;
+    const horizontalPiece = { x: cX, y: tY + h / 2, width: w, height: h, horizontal: true };
+    return horizontalPiece;
   }
-  return false;
+  return null;
 }
 
-function _drawVerticalPiece(wx, wy) {
+function _getPotentialVerticalPiece(wx, wy) {
   let support = getHighestPieceBelow(wx, wy);
     // el top de la peça que te a sota
     let baseY   = support
@@ -169,12 +186,12 @@ function _drawVerticalPiece(wx, wy) {
                   : 0;
   
     let needed = wy - baseY;
-    let size   = getMinSizeToCover(abs(needed));
+    let size   = getMinSizeToCover(Math.abs(needed));
     let pH     = size * piece_width;
-    pH         = min (needed, pH);
+    pH         = Math.min (needed, pH);
     let cY     = baseY + pH/2;
     //console.log(`needed ${needed} size ${size} pH ${pH} cY ${cY} `);
-    pieces.push({ x: wx, y: cY, width: piece_width, height: pH, horizontal: false });
+    return { x: wx, y: cY, width: piece_width, height: pH, horizontal: false };
 
 }
 export function getWorldXBounds() {
@@ -195,3 +212,4 @@ export function getWorldXBounds() {
 
   return { worldMinX: wMinX, worldMaxX: wMaxX };
 }
+

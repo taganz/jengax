@@ -2,7 +2,7 @@
 // Mobile-friendly input: tap to place, long press to delete, pinch-to-zoom, two-finger pan
 
 import { screenToWorldX, screenToWorldY } from './camera.js';
-import { piece_width, getPieceIdUnderWorld, deletePiece, addPiece } from './pieces.js';
+import { piece_width, deletePiece, addPiece } from './pieces.js';
 import { inputMode } from './ui.js';
 import { snapToGrid } from './main.js';
 
@@ -20,7 +20,7 @@ function mouseIsInsideCanvas() {
 
 export function touchStarted() {
   if (inputMode == 'desktop') return;
-  if (!mouseIsInsideCanvas()) { console.log('touch outside canvas');return};  // ignore clicks off-canvas
+  if (!mouseIsInsideCanvas()) return;  // ignore clicks off-canvas
   if (touches.length === 1) {
     tapTimer = setTimeout(() => {
       longPressDetected = true;
@@ -33,7 +33,7 @@ export function touchStarted() {
 
 export function touchEnded() {
 if (inputMode == 'desktop') return;
-if (!mouseIsInsideCanvas()) { console.log('touch outside canvas');return};  // ignore clicks off-canvas
+if (!mouseIsInsideCanvas()) return;  // ignore clicks off-canvas
 
   clearTimeout(tapTimer);
 
@@ -44,17 +44,14 @@ if (!mouseIsInsideCanvas()) { console.log('touch outside canvas');return};  // i
       wx = Math.round(wx / piece_width) * piece_width;
       wy = Math.round(wy / piece_width) * piece_width;
   }
-  const index = getPieceIdUnderWorld(wx, wy);
-
   if (touches.length === 0 && longPressDetected) {
       // long tap
   }
   else {    
-    // short tap
-    if (index != null) {
-        deletePiece(index);
-    }
-    else {
+
+    // Si hay una pieza bajo el cursor, la borra
+    const deletedPiece = deletePiece(wx, wy);
+    if (!deletedPiece) {
        addPiece(wx, wy);
     }
   }
