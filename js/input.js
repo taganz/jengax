@@ -1,9 +1,5 @@
 // input.js
-import { piece_width, 
-      deletePiece,
-      undoPiece,
-      addPiece
-      } from './pieces.js';
+import { piece_width, undoPiece, doPiece } from './pieces.js';
 import { zoomAt, pan } from './camera.js';
 import { handleSave, handleLoad } from './io.js';
 import { snapToGrid } from './main.js';
@@ -51,11 +47,8 @@ export function mousePressed() {
     return false;
   }
 
-  // Si hay una pieza bajo el cursor, la borra
-  const deletedPiece = deletePiece(wx, wy);
-  if (!deletedPiece) {
-    addPiece(wx, wy);
-  }
+  
+  doPiece(wx, wy);
   redraw();
   return false;
 }

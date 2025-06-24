@@ -2,7 +2,7 @@
 // Mobile-friendly input: tap to place, long press to delete, pinch-to-zoom, two-finger pan
 
 import { screenToWorldX, screenToWorldY } from './camera.js';
-import { piece_width, deletePiece, addPiece } from './pieces.js';
+import { piece_width, doPiece } from './pieces.js';
 import { inputMode } from './ui.js';
 import { snapToGrid } from './main.js';
 
@@ -49,11 +49,7 @@ if (!mouseIsInsideCanvas()) return;  // ignore clicks off-canvas
   }
   else {    
 
-    // Si hay una pieza bajo el cursor, la borra
-    const deletedPiece = deletePiece(wx, wy);
-    if (!deletedPiece) {
-       addPiece(wx, wy);
-    }
+    doPiece(wx, wy);
   }
   redraw();
 

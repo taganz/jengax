@@ -10,36 +10,63 @@ export const piece_border   = 1;
 
 
 export const pieces = [];
-export let lastDeletedPiece = null;
+//let lastDeletedPiece = null;
+let lastCandidateId = null;
+let candidates = [];
+let last_wx = null;
+let last_wy = null;
 
 
-export function addPiece(wx, wy) {
 
-  let phori = _getPotentialHorizontalPiece(wx, wy);
-  if (phori) {
-    pieces.push(phori);
-    posthog.capture('input_add_horizontal');
-  } else {  
-    let pvert = _getPotentialVerticalPiece(wx, wy);
-    if (pvert) {
-      posthog.capture('input_add_vertical');
-      pieces.push(pvert);
-    } else {
-      posthog.capture('error_pieces_no_potential_pieces')
-      console.log("No potencial pieces at addPiece???");
+
+
+export function doPiece(wx, wy) {
+
+  // si fem clic al mateix lloc es que volem provar un altre candidat
+  if (pieces.length > 0 && (last_wx == wx && last_wy== wy ) ) {  
+    _removeLastPiece();
+    if (++lastCandidateId < candidates.length) { 
+      // prova un altre candidat
+      pieces.push(candidates[lastCandidateId]);
+      lastCandidateId++;
+    }
+    else {
+      // hem arribat ja a l'ultim candidat, no afegim res per si vol borrar, i despres donarem la volta
+      lastCandidateId = 0;
+      last_wx = null;
+      last_wx = null;
     }
   }
-  lastDeletedPiece = null;
+  else
+  {
+    // hem fet clic en un altre lloc (o es el primer clic)
+
+    // Si hay una pieza bajo el cursor, la borra
+    const deletedPiece = deletePiece(wx, wy);
+
+    if (!deletedPiece) {
+        // vamos a buscar candidatos y a añadir el primero
+        posthog.capture('input_add');   
+
+        candidates = getCandidates(wx, wy);
+        last_wx = wx;
+        last_wy = wy;
+        lastCandidateId = 0;
+        pieces.push(candidates[lastCandidateId]);
+    }
+  }
+
+  //lastDeletedPiece = null;
 }
 
 export function undoPiece() {
   posthog.capture('input_undo');
-  if (lastDeletedPiece != null) {
-     _restoreLastDeletedPiece();
-  }
-  else {
+  //if (lastDeletedPiece != null) {
+  //   _restoreLastDeletedPiece();
+  //}
+  //else {
     _removeLastPiece(); 
-  }
+  //}
   redraw();
 }
 
@@ -56,7 +83,7 @@ export function loadPieces(piecesToLoad) {
 }
 
 function _removeLastPiece() {
-  lastDeletedPiece = null;
+  //lastDeletedPiece = null;
   if (pieces.length > 0) pieces.pop();
   redraw();
 }
@@ -65,7 +92,7 @@ export function deletePiece(wx, wy) {
   const index = _getPieceIdUnderWorld(wx, wy);
   if (index != null) { 
     posthog.capture('input_delete');
-    lastDeletedPiece = pieces[index];
+    //lastDeletedPiece = pieces[index];
    pieces.splice(index,1);
   }
   return (index != null);
@@ -85,12 +112,14 @@ export function _getPieceIdUnderWorld(wx, wy) {
   return null;
 }
 
+/*
 function _restoreLastDeletedPiece() {
   if (!lastDeletedPiece) return false;
   pieces.push(lastDeletedPiece);
   lastDeletedPiece = null;
   return;
 }
+  */
 
 export function getHighestPieceBelow(x, y) {
   let best = null;
@@ -226,3 +255,12 @@ export function getWorldXBounds() {
 }
 
 
+// horizontals before verticals
+export function getCandidates(wx, wy) {
+  const phori = _getPotentialHorizontalPiece(wx, wy);
+  const pvert = _getPotentialVerticalPiece(wx, wy);
+  const cand = [];
+  if (phori) cand.push(phori);
+  if (pvert) cand.push(pvert);
+  return cand;
+}
