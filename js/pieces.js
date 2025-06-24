@@ -113,53 +113,65 @@ export function getHighestPieceBelow(x, y) {
   return best;
 }
 
-// return two pieces that can be the support for an horizontal one
+/**
+ * Encuentra los dos soportes verticales (uno a la izquierda y otro a la derecha)
+ * con la menor distancia horizontal posible y al mismo nivel, sin interferencias.
+ * Devuelve { left, right } o null si no hay pareja válida.
+ */
 export function _getHorizontalSupport(x, y) {
   const maxDist = piece_width * piece_sizes[piece_sizes.length - 1];
-  let leftSup = null, rightSup = null;
-  let bestTopLeft = -Infinity, bestTopRight = -Infinity;
+  const leftCandidates = [];
+  const rightCandidates = [];
+
+  // 1) Separar piezas verticales en candidatos izquierda o derecha
   for (const p of pieces) {
     if (p.horizontal) continue;
-    const top = p.y + p.height/2;
-    const left = p.x - p.width/2;
-    const right = p.x + p.width/2;
-    const dx = Math.abs(p.x - x);
-    // Ignorar si el top está por encima del punto clicado
-    if (top > y) continue;
-    // Piezas suficientemente cerca a la izquierda
-    if (right < x && dx <= maxDist && top > bestTopLeft) {
-      bestTopLeft = top; leftSup = p;
-    }
-    // Piezas suficientemente cerca a la derecha
-    if (left > x && dx <= maxDist && top > bestTopRight) {
-      bestTopRight = top; rightSup = p;
-    }
+    const top = p.y + p.height / 2;
+    // ignora los que quedan muy lejos de la y del cursor
+    if (y - top > 3*piece_width) continue;
+    const dx  = Math.abs(p.x - x);
+    if (top > y || dx > maxDist) continue;
+    if (p.x < x) leftCandidates.push({ piece: p, top });
+    else if (p.x > x) rightCandidates.push({ piece: p, top });
   }
-  if (leftSup && rightSup && Math.abs(bestTopLeft - bestTopRight) < 1) {
-    const supportY = bestTopLeft;
 
-    // ❗ Nueva condición: buscar pieza horizontal por encima del soporte y solapando con x
-    for (let p of pieces) {
-      if (!p.horizontal) continue;
+  let bestPair = null;
+  let minSpan  = Infinity;
 
-      let top = p.y + p.height / 2;
-      let bottom = p.y - p.height / 2;
-      let left = p.x - p.width / 2;
-      let right = p.x + p.width / 2;
-
-      if (
-        Math.abs(bottom - supportY) < 1 && // evitar repetir piezas horizontales
-        x >= left && x <= right // se solapa con la posición del clic
-      ) {
-        return null; // ❌ No hay soporte válido si hay interferencia encima
+  // 2) Probar cada combinación de candidatos
+  for (const left of leftCandidates) {
+    for (const right of rightCandidates) {
+      // deben estar casi al mismo nivel
+      if (Math.abs(left.top - right.top) < 1) {
+        const span = right.piece.x - left.piece.x;
+        if (span < minSpan) {
+          const supportY = left.top;
+          // 3) Comprobar que no hay pieza horizontal encima de este nivel
+          let interference = false;
+          for (const hp of pieces) {
+            if (!hp.horizontal) continue;
+            const bottom = hp.y - hp.height / 2;
+            const l      = hp.x - hp.width  / 2;
+            const r      = hp.x + hp.width  / 2;
+            if (
+              Math.abs(bottom - supportY) < 1 &&
+              x >= l && x <= r
+            ) {
+              interference = true;
+              break;
+            }
+          }
+          // 4) Si no hay interferencia, lo consideramos
+          if (!interference) {
+            bestPair = { left: left.piece, right: right.piece };
+            minSpan  = span;
+          }
+        }
       }
     }
-
-    // ✅ No hay interferencia → se puede usar soporte
-    
-    return { left: leftSup, right: rightSup };
   }
-  return null;
+
+  return bestPair;
 }
 
 export function _getHorizontalFromSupport(pleft, pright) {
@@ -212,4 +224,5 @@ export function getWorldXBounds() {
 
   return { worldMinX: wMinX, worldMaxX: wMaxX };
 }
+
 
