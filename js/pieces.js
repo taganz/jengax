@@ -157,7 +157,7 @@ export function _getHorizontalSupport(x, y) {
     if (p.horizontal) continue;
     const top = p.y + p.height / 2;
     // ignora los que quedan muy lejos de la y del cursor
-    if (y - top > 3*piece_width) continue;
+  //  if (y - top > 3*piece_width) continue;
     const dx  = Math.abs(p.x - x);
     if (top > y || dx > maxDist) continue;
     if (p.x < x) leftCandidates.push({ piece: p, top });
