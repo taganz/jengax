@@ -53,10 +53,9 @@ export function mousePressed() {
   return false;
 }
 
-export function mouseReleased() {
- if (inputMode == 'touch') return;
-  isDragging = false;
-}
+
+let lastAutoPos = null;
+let autoPlaceDist = 5*piece_width; // distancia mínima entre piezas
 
 export function mouseDragged() {
   if (inputMode == 'touch') return;
@@ -65,8 +64,38 @@ export function mouseDragged() {
     lastMouseX = mouseX;  
     lastMouseY = mouseY;
     redraw();
+  } else  {
+      let wx = screenToWorldX(mouseX);
+      let wy = screenToWorldY(mouseY);
+      if (snapToGrid) {
+        wx = Math.round(wx / piece_width) * piece_width;
+        wy = Math.round(wy / piece_width) * piece_width;
+      }
+      // Si es la primera vez o se ha movido suficiente distancia
+      if (
+        !lastAutoPos ||
+        dist(wx, wy, lastAutoPos.x, lastAutoPos.y) >= autoPlaceDist
+      ) {
+        // Guardamos punto para el siguiente trigger
+        lastAutoPos = { x: wx, y: wy };
+
+        // Lógica de colocación (puede ser tu placeVerticalPiece o la general)
+        doPiece(wx, wy);
+        redraw();
+
+        autoPlaceDist = piece_width * Math.floor(-3, 8);
+
+      }
+    }       
   }
+
+export function mouseReleased() {
+ if (inputMode == 'touch') return;
+  isDragging = false;
+  lastAutoPos = null;
+
 }
+
 
 export function keyPressed() {
   if (inputMode == 'touch') return;
