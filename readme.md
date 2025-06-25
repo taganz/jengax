@@ -22,6 +22,7 @@ Users can place vertical and horizontal rectangular pieces based on specific sup
 - **Draw modes**: Press "1" for hand drawn and "2" for solid.
 - Press "A" to **autodraw** current sketch.
 - Right-click to **undo**.
+- **Random generated sketch**: Keep mouse pressed and pieces will keep falling randomly. This is a autoreplay of a sketch created this way https://imgur.com/a/JPchOSL
 
 ## I/O
 
