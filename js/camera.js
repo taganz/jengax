@@ -27,7 +27,7 @@ export function zoomAt(mouseX, mouseY, zoomFactor) {
   // veure demo https://openprocessing.org/sketch/create
   // Actualizar offsets antes de cambiar la escala
   viewOffsetX = mouseX + (viewOffsetX - mouseX) * zoomFactor;
-  viewOffsetY = mouseY + (viewOffsetY - mouseY) * zoomFactor;
+  //viewOffsetY = 0; //mouseY + (viewOffsetY - mouseY) * zoomFactor;
   //viewOffsetY = - mouseY - height + (height + viewOffsetY - mouseY) * zoomFactor;
   // Actualizar escala
   viewScale *= zoomFactor;

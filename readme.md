@@ -15,7 +15,7 @@ Users can place vertical and horizontal rectangular pieces based on specific sup
 - **Horizontal pieces** can only be placed if two supporting vertical pieces are aligned and close enough.
 
 - Mouse wheel to **Zoom in/out** the canvas under the cursor
-- Shift+Left-click or Middle-click or Arrow keys to **move** the canvas.
+- Shift+drag or Middle-click drag or Arrow keys to **move** the canvas.
 
 - Hold "Q" to show current **mouse coordinates**.
 
