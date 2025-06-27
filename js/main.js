@@ -8,6 +8,7 @@ import { handleFile, setFileInput } from './io.js';
 import { initUI } from './ui.js';
 import { touchEnded, touchStarted } from './inputMobile.js';
 import { posthogInitUser } from './posthog.js';
+import { resetCamera } from './camera.js';
 
 export const jengax_version = '1.0.2';
 
@@ -42,6 +43,7 @@ function createCanvasAdaptedToWindow() {
   let canvasHeight = min(600, windowHeight);
   console.log(`canvas created: ${canvasWidth}x${canvasHeight}`);
   cnv = createCanvas(canvasWidth, canvasHeight);
+  resetCamera();
 }
 
 function windowResized() {

@@ -1,7 +1,7 @@
 // rendering.js
 import { pieces, piece_width, piece_border, getWorldXBounds, clearPieces } from './pieces.js';
 import { qHeld } from './input.js';
-import { screenToWorldX, screenToWorldY, worldToScreenX, worldToScreenY } from './camera.js';
+import { resetCamera, screenToWorldX, screenToWorldY, worldToScreenX, worldToScreenY } from './camera.js';
 import { viewScale, viewOffsetX, viewOffsetY } from './camera.js';
 
 let ground_border  = 1;
@@ -155,6 +155,7 @@ export function clearCanvas() {
   clearPieces();
   background(background_color);
   autoDraw = false;
+  resetCamera();
 }
 
 /**
