@@ -17,12 +17,12 @@ export function logCursorPosition() {
   console.log("---------------------------");
   let worldMinX, worldMaxX;
   ({ worldMinX, worldMaxX } = getWorldXBounds());
-  console.log(`World bounds: ${worldMinX}, ${worldMaxX}`);
-  console.log("World bounds to screen:", worldToScreenX(worldMinX), worldToScreenX(worldMaxX));
-  console.log(`Cursor position: (${mouseX}, ${mouseY})`);
-  console.log(`World position: (${screenToWorldX(mouseX)}, ${screenToWorldY(mouseY)})`);
-  console.log(`Camera scale: ${viewScale}`);
-  console.log(`Camera offset: (${viewOffsetX}, ${viewOffsetY})`);
+  console.log(`World bounds: ${worldMinX.toFixed(1)}, ${worldMaxX.toFixed(1)}`);
+  console.log("World bounds to screen:", worldToScreenX(worldMinX).toFixed(1), worldToScreenX(worldMaxX).toFixed(1));
+  console.log(`Cursor position: (${mouseX.toFixed(1)}, ${mouseY.toFixed(1)})`);
+  console.log(`World position: (${screenToWorldX(mouseX).toFixed(1)}, ${screenToWorldY(mouseY).toFixed(1)})`);
+  console.log(`Camera scale: ${viewScale.toFixed(1)}`);
+  console.log(`Camera offset: (${viewOffsetX.toFixed(1)}, ${viewOffsetY.toFixed(1)})`);
 }
 
 export function isMobileDevice() {
