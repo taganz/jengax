@@ -30,18 +30,9 @@ export function worldToScreenY(wy) {
 }
 
 export function zoomAt(mouseX, mouseY, zoomFactor) {
-  let viewOffsetX0 = viewOffsetX, viewScale0=viewScale;
-  // veure demo https://openprocessing.org/sketch/create
-  // Actualizar offsets antes de cambiar la escala
+  // veure demo https://openprocessing.org/sketch/2680897
   viewOffsetX = mouseX + (viewOffsetX - mouseX) * zoomFactor;
-  //viewOffsetY = 0; //mouseY + (viewOffsetY - mouseY) * zoomFactor;
-  //viewOffsetY = - mouseY - height + (height + viewOffsetY - mouseY) * zoomFactor;
-  // Actualizar escala
   viewScale *= zoomFactor;
-  console.log(`viewOffsetX: ${viewOffsetX0.toFixed(1)}->${viewOffsetX.toFixed(1)}`)
-  console.log(`viewScale:   ${viewScale0.toFixed(1)}->${viewScale.toFixed(1)}  zoomFactor: ${zoomFactor.toFixed(4)}`)
-  console.log(`mouseX:      ${mouseX.toFixed(1)}`)
-  console.log(`wx:      ${screenToWorldX(mouseX).toFixed(1)}`)
   
 }
 

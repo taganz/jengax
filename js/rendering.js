@@ -49,16 +49,19 @@ export function draw() {
   if (drawMode==="hand-drawn" && !scribble) initScribble();
   if (!autoDraw) background(background_color);
   rectMode(CENTER);  // 
+  
   // Camera transform (viewScale, viewOffsetX, viewOffsetY)
   push();
-    // 1) lleva el origen pantalla a la línea del suelo:
-    //    — suelo en pantalla está en bottom, o puedes usar viewOffsetY
-    translate(viewOffsetX, viewOffsetY + height);
-    // after scaling, origin is at bottom left of screen (plus offset), and Y is inverted
-    scale(viewScale, -viewScale);
-    
 
+  //debug_drawTestLinesBeforeTransform();
+    
+    translate(viewOffsetX, viewOffsetY + height);
+    scale(viewScale, -viewScale);
+  
+    //debug_drawTestLinesAfterTransform() ;
     drawGround();          
+
+    
     let drawModeFunction;
     switch (drawMode) {
       case 'solid': 
@@ -186,3 +189,26 @@ export function getScaledImagePNG(maxSize) {
   // 5. Return PNG data URL
   return tempCanvas.toDataURL('image/png');
 }
+
+
+
+function debug_drawTestLinesBeforeTransform() {
+    // test 
+    stroke('magenta');
+    line(0,500, width, 500);
+    line(300, 0, 300, height);
+    
+    stroke('red');
+    line(0,510, width, 510);
+    line(310, 0, 310, height);
+
+  }
+function debug_drawTestLinesAfterTransform() {
+  stroke('green');
+  let y1 = screenToWorldY(505);
+  line(screenToWorldX(0), y1, screenToWorldX(width), y1);
+  let x2 = screenToWorldX(305);
+  line(x2, screenToWorldY(0), x2, screenToWorldY(height));
+}
+
+    

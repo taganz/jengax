@@ -30,10 +30,9 @@ export function setup() {
   cnv2.addEventListener('contextmenu', e => e.preventDefault());
 
   // Prevent page scroll on canvas wheel
-  //cnv.addEventListener('wheel', e => e.preventDefault(), { passive: false });
   cnv2.addEventListener('wheel', handleZoom, { passive: false });
 
-    // Hidden file input for “Load” (L). 
+  // Hidden file input for “Load” (L). 
   // It is created here because it is a p5.js specific function
   setFileInput(createFileInput(handleFile));
 }
