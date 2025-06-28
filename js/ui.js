@@ -16,12 +16,12 @@ const buttonLogout = document.getElementById("button-logout");
 const buttonAnimate = document.getElementById("button-animate");
 const buttonPublish = document.getElementById("button-publish");
 const buttonGallery = document.getElementById("button-gallery");
-const buttonCanvas = document.getElementById("button-canvas");
+const buttonCanvas = document.getElementById("button-canvas");  // hide gallery
 const buttonSave = document.getElementById("button-save-file");
 const buttonLoad = document.getElementById("button-load-file");
 const buttonClear = document.getElementById("button-clear");
 const buttonUndo = document.getElementById("button-undo");
-const textLoginToGallery = document.getElementById("msg-log-for-gallery");
+const textInfoMessage = document.getElementById("infoMessage");
 const gallery = document.getElementById("gallery");
 const userInfo = document.getElementById("logged-user");
 const textWarningMobile = document.getElementById("warning-mobile");
@@ -32,6 +32,7 @@ const exampleImg3 = document.getElementById('example3');
 export function initUI() {
 
     // two UI modes: Gallery and Canvas
+    setInfo("Click to add pieces!")
     setUIModeCanvas();
     
     if (isMobileDevice()) {
@@ -55,7 +56,7 @@ export function initUI() {
       //e.preventDefault();  // -->???
       posthog.capture('button_animate');
       if (piecesIsEmpty()) {
-        alert ("Nothing to animate yet!. Draw something first");
+        setInfo ("Nothing to animate yet!. Draw something first");
       } else {
         toogleAutoDraw();
         redraw();
@@ -70,7 +71,8 @@ export function initUI() {
     });
 
     buttonCanvas.addEventListener("click", (e) => {
-      posthog.capture('button_canvas');
+      posthog.capture('button_canvas');  // hide gallery
+      clearMessage();
       setUIModeCanvas();  
     });
 
@@ -84,8 +86,14 @@ export function initUI() {
     
 
     buttonPublish.addEventListener("click", (e) => {    
-    posthog.capture('button_publish');
+     if (!currentUser) {
+      console.log("user not logged")
+      posthog.capture('button_publish_not_logged');
+      setInfo("You need to log in to publish in the gallery. Only Google login by now....")
+     } else {
+     posthog.capture('button_publish_logged');
      saveSketch();
+     }
     });
     buttonSave.addEventListener("click", (e) => {    
     posthog.capture('button_save');
@@ -97,6 +105,7 @@ export function initUI() {
     });
     buttonClear.addEventListener("click", (e) => {    
     posthog.capture('button_clear');
+     clearMessage();
      clearCanvas();
     });    
     buttonUndo.addEventListener("click", (e) => {    
@@ -121,17 +130,7 @@ export function initUI() {
    //  canvas.addEventListener('touchmove', touchMoved, { passive: false });
 
   if (isMobileDevice()) {
-    //textWarningMobile.textContent = "⚠️ Jengax is designed for desktop. Some features may not work well on mobile devices.";
-    textWarningMobile.textContent = "⚠️ Jengax is optimized for desktop.";
-    textWarningMobile.style.cssText = `
-      background: #fdd;
-      color: #900;
-      padding: 12px;
-      text-align: center;
-      font-family: sans-serif;
-      font-size: 14px;
-      z-index: 1000;
-    `;
+    setWarning("⚠️ Jengax is optimized for desktop.");
     /*
       position: fixed;
       bottom: 0;
@@ -177,16 +176,16 @@ function setLoginStateButtons() {
         buttonLogin.classList.add("hidden");
         buttonLogout.classList.remove("hidden");
         buttonPublish.classList.remove("hidden");
-        textLoginToGallery.classList.add("hidden");
+        textInfoMessage.classList.remove("hidden");
         userInfo.innerHTML = `
            <span>${currentUser.displayName}</span>
           `;
     } else {
-        buttonGallery.classList.add("hidden");
+        buttonGallery.classList.remove("hidden"); // allow gallery access without login
         buttonLogin.classList.remove("hidden");
         buttonLogout.classList.add("hidden");
-        buttonPublish.classList.add("hidden");
-        textLoginToGallery.classList.remove("hidden");
+        buttonPublish.classList.remove("hidden");
+        textInfoMessage.classList.remove("hidden");
         userInfo.innerHTML = "";
     }
 }
@@ -198,7 +197,8 @@ export async function renderGallery() {
   
   //setUIModeGallery();
 
-  gallery.innerHTML = "<strong>Loading gallery...<strong>"; 
+  setInfo("Loading gallery. Please wait...");
+  gallery.innerHTML = "Loading..."; 
   // --> canviar color
   gallery.style.cssText = `
     background: #fdd;
@@ -214,11 +214,17 @@ export async function renderGallery() {
   gallery.innerHTML = ""; // limpia antes de pintar
   gallery.style.display = "grid";
   
+  if (!list) {
+    setWarning("Error accessing gallery");
+    return;
+  }
   if (list.length === 0) {
-    gallery.textContent = "No sketches stored.";
+    setWarning("No sketches stored");
     return;
   }
 
+  setInfo(`Loaded ${list.length} sketches`);
+  
 
    list.forEach(item => {
     const itemDiv = document.createElement("div");
@@ -306,3 +312,42 @@ export async function renderGallery() {
   });
 }
 
+function setInfo(txt) {
+  textInfoMessage.innerHTML = txt;
+      textInfoMessage.style.cssText = `
+      background: #eee;
+      color: #000;
+      padding: 12px;
+      text-align: center;
+      font-family: sans-serif;
+      font-size: 14px;
+      z-index: 1000;
+    `;
+}
+
+function clearMessage() {
+  textInfoMessage.innerHTML = "";
+      textInfoMessage.style.cssText = `
+      background: #fff;
+      color: #000;
+      padding: 12px;
+      text-align: center;
+      font-family: sans-serif;
+      font-size: 14px;
+      z-index: 1000;
+    `;
+}
+
+function setWarning(text) {
+    textInfoMessage.textContent = text;
+    textInfoMessage.style.cssText = `
+      background: #fdd;
+      color: #900;
+      padding: 12px;
+      text-align: center;
+      font-family: sans-serif;
+      font-size: 14px;
+      z-index: 1000;
+    `;
+
+}
