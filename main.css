@@ -2,21 +2,34 @@
   display: none;
 }
 
-button {
-  background-color: #444;
-  color: white;
-  border: none;
+/* common button styles */
+.btn {
   padding: 8px 12px;
   margin: 4px;
+  border: none;
   border-radius: 4px;
   font-size: 0.95em;
   cursor: pointer;
   transition: background-color 0.2s ease;
 }
-button:hover {
+
+/* “dark” variant (your current look) */
+.btn-dark {
+  background-color: #666;  /* 444  */
+  color: #fff;
+}
+.btn-dark:hover {
   background-color: #222;
 }
 
+/* “light” variant */
+.btn-light {
+  background-color: #eee;
+  color: #333;
+}
+.btn-light:hover {
+  background-color: #ddd;
+}
 .hidden {
   display: none;
 }
