@@ -11,7 +11,7 @@ import {
   serverTimestamp 
 } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-firestore.js";
 import { cnv } from "./main.js";
-import { pieces } from "./pieces.js";
+import { pieces } from "./pieces/pieces.js";
 import { currentUser } from "./auth.js";
 import { viewScale, viewOffsetX, viewOffsetY} from "./camera.js";
 import { getScaledImagePNG } from './rendering.js';

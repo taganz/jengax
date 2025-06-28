@@ -1,5 +1,5 @@
 // rendering.js
-import { pieces, piece_width, piece_border, getWorldXBounds, clearPieces } from './pieces.js';
+import { pieces, piece_width, piece_border, getWorldXBounds, clearPieces } from './pieces/pieces.js';
 import { qHeld } from './input.js';
 import { resetCamera, screenToWorldX, screenToWorldY, worldToScreenX, worldToScreenY } from './camera.js';
 import { viewScale, viewOffsetX, viewOffsetY } from './camera.js';

@@ -1,8 +1,7 @@
 import { pieces, clearPieces, getWorldXBounds, getCandidates,
-  _getHorizontalSupport,
-  piece_border, piece_sizes, piece_width
-} from '../js/pieces.js';
-
+  piece_border, piece_sizes, piece_width, divideVerticalPieces,
+  existHorizontal
+} from '../../js/pieces/pieces.js';
 
 describe('pieces', function () {
   beforeEach(function () {
@@ -24,22 +23,57 @@ describe('pieces', function () {
     chai.expect(getWorldXBounds()).to.deep.equal({ worldMinX: 90, worldMaxX: 110 });
   });
 
-
-  it('_getHorizontalSupport() no vertical pieces under clic return null', function () {
+ it('divideVerticalPieces() separa dos piezas', function () {
     let vert1 = { x: 100, y: 30, width: 20, height: 60, horizontal: false};
-    let vert2 = { x: 100, y: 30, width: 20, height: 60, horizontal: false };
+    let vert2 = { x: 200, y: 30, width: 20, height: 60, horizontal: false };
     pieces.push(vert1);
     pieces.push(vert2);
-    chai.expect(_getHorizontalSupport(150, 90)).to.equal(null);
+    const expected = {
+                        left:  [{piece: vert1, top: 60}]
+                      , right: [{piece: vert2, top: 60}]
+                     };
+    //console.log("divideVerticalPieces: ", divideVerticalPieces(150, 200));
+    //console.log("expected: ", expected);
+    chai.expect(divideVerticalPieces(150, 200)).to.deep.equal(expected);
   });
-
-  it('_getHorizontalSupport() horizontal sobre 2 verticales iguales', function () {
-    let vert1 = { x: 100, y: 30, width: 20, height: 60, horizontal: false};
-    let vert2 = { x: 300, y: 30, width: 20, height: 60, horizontal: false };
+ it('divideVerticalPieces() controla altura', function () {
+    let vert1 = { x: 100, y: 40, width: 20, height: 80, horizontal: false};
+    let vert2 = { x: 200, y: 30, width: 20, height: 60, horizontal: false };
     pieces.push(vert1);
     pieces.push(vert2);
-    chai.expect(_getHorizontalSupport(150, 90)).to.deep.equal({left: vert1, right: vert2});
+    const expected = {
+                        left:  []
+                      , right: [{piece: vert2, top: 60}]
+                     };
+    //console.log("divideVerticalPieces: ", divideVerticalPieces(150, 200));
+    //console.log("expected: ", expected);
+    chai.expect(divideVerticalPieces(150, 65)).to.deep.equal(expected);
   });
+ it('divideVerticalPieces() controla distancia', function () {
+    let vert1 = { x: 100, y: 30, width: 20, height: 60, horizontal: false};
+    let vert2 = { x: 400, y: 30, width: 20, height: 60, horizontal: false };
+    pieces.push(vert1);
+    pieces.push(vert2);
+    const expected = {
+                        left:  []
+                      , right: [{piece: vert2, top: 60}]
+                     };
+    //console.log("divideVerticalPieces: ", divideVerticalPieces(150, 200));
+    //console.log("expected: ", expected);
+    chai.expect(divideVerticalPieces(300, 65, 120)).to.deep.equal(expected);
+  });
+
+
+  it('existHorizontal() - detecta horizontal', function () {
+    let vert1 = { x: 100, y: 30, width: 20, height: 60, horizontal: false };
+    let vert2 = { x: 200, y: 30, width: 20, height: 60, horizontal: false };
+    let horiz = { x: 150, y: 70, width: 140, height: 20, horizontal: true};
+    pieces.push(vert1);
+    pieces.push(vert2);
+    pieces.push(horiz);
+    chai.expect(existHorizontal(150, 70)).to.equal(true);
+  });
+  
 
   it('getCandidates() over 2 equal verticals returns an horizontal and a vertical', function () {
     pieces.push({ x: 100, y: 30, width: 20, height: 60, horizontal: false });
@@ -54,7 +88,7 @@ describe('pieces', function () {
   it('getCandidates() when empty and low returns one vertical', function () {
     let pvert = {x: 200, y: 15, width: 20, height: 30, horizontal: false};  // talla a 30
     let candidates = getCandidates(200, 30);
-    console.log(candidates);
+   // console.log(candidates);
     chai.expect(candidates).to.deep.equal([pvert]);
   });
   

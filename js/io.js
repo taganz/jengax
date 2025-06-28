@@ -1,5 +1,5 @@
 // io.js
-import { pieces, loadPieces } from './pieces.js';
+import { pieces, loadPieces } from './pieces/pieces.js';
 import { viewScale, viewOffsetX, viewOffsetY, setCamera } from './camera.js';
 //import { fileInput } from './main.js';
 

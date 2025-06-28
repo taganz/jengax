@@ -1,4 +1,4 @@
-import { piece_sizes, piece_width, getWorldXBounds } from "./pieces.js";
+import { piece_sizes, piece_width, getWorldXBounds } from "./pieces/pieces.js";
 import { screenToWorldX, screenToWorldY, worldToScreenX } from "./camera.js";
 import { viewScale, viewOffsetX, viewOffsetY } from "./camera.js"; 
 

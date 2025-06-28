@@ -4,7 +4,7 @@ import { handleSave, handleLoad, loadSketchFromGallery, loadAssetJSON } from "./
 import { login, logout, currentUserId, currentUser } from "./auth.js";
 import { isMobileDevice } from './utils.js';
 import { clearCanvas, toogleAutoDraw } from "./rendering.js";
-import { piecesIsEmpty, undoPiece} from './pieces.js';
+import { piecesIsEmpty, undoPiece} from './pieces/pieces.js';
 //import { touchMoved } from "./inputMobile.js";
 
 export let inputMode = 'desktop'; // o 'touch'

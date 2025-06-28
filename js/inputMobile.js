@@ -2,7 +2,7 @@
 // Mobile-friendly input: tap to place, long press to delete, pinch-to-zoom, two-finger pan
 
 import { screenToWorldX, screenToWorldY } from './camera.js';
-import { piece_width, doPiece } from './pieces.js';
+import { piece_width, doPiece } from './pieces/pieces.js';
 import { inputMode } from './ui.js';
 import { snapToGrid } from './main.js';
 

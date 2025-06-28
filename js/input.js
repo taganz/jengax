@@ -1,5 +1,5 @@
 // input.js
-import { piece_width, undoPiece, doPiece } from './pieces.js';
+import { piece_width, undoPiece, doPiece } from './pieces/pieces.js';
 import { zoomAt, pan } from './camera.js';
 import { handleSave, handleLoad } from './io.js';
 import { snapToGrid } from './main.js';
