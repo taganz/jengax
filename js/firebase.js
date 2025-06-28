@@ -77,7 +77,7 @@ export async function fetchSketchList() {
       const data = d.data();
       return {
         id: d.id,
-        sketchName: data.sketchName || "Untitled",
+        sketchName: data.sketchName || ".",
         user: data.user,
         userDisplayName: data.userDisplayName || "Anonymous",
         sketchImage: data.sketchImage,
