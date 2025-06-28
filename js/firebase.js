@@ -70,19 +70,26 @@ export async function saveSketch() {
  * @returns {Promise<Array<{ id: string, sketchName: string, user: string, createdAt: Date }>>}
  */
 export async function fetchSketchList() {
-  const col = collection(db, "jengax-sketch");
-  const snap = await getDocs(col);
-  return snap.docs.map(d => {
-    const data = d.data();
-    return {
-      id: d.id,
-      sketchName: data.sketchName  ? data.sketchName : "Untitled",
-      user: data.user,
-      userDisplayName: data.userDisplayName || "Anonymous",
-      sketchImage: data.sketchImage,
-      createdAt: data.createdAt?.toDate() ?? null
-    };
-  });
+  try {
+    const col = collection(db, "jengax-sketch");
+    const snap = await getDocs(col);
+    return snap.docs.map(d => {
+      const data = d.data();
+      return {
+        id: d.id,
+        sketchName: data.sketchName || "Untitled",
+        user: data.user,
+        userDisplayName: data.userDisplayName || "Anonymous",
+        sketchImage: data.sketchImage,
+        createdAt: data.createdAt?.toDate() ?? null
+      };
+    });
+  } catch (error) {
+    console.error("❌ Error fetching sketches from Firestore:", error);
+    return null;
+    // Opción B: relanzar el error para que el llamador lo maneje
+    // throw error;
+  }
 }
 
 /**
