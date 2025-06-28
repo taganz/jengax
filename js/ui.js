@@ -24,22 +24,29 @@ const buttonUndo = document.getElementById("button-undo");
 const textInfoMessage = document.getElementById("infoMessage");
 const gallery = document.getElementById("gallery");
 const userInfo = document.getElementById("logged-user");
-const textWarningMobile = document.getElementById("warning-mobile");
 const exampleImg1 = document.getElementById('example1');
 const exampleImg2 = document.getElementById('example2');
 const exampleImg3 = document.getElementById('example3');
 
 export function initUI() {
 
-    // two UI modes: Gallery and Canvas
-    setInfo("Click to add pieces!")
-    setUIModeCanvas();
-    
-    if (isMobileDevice()) {
-      inputMode = 'touch';
-    }
-    console.log(`${inputMode} mode`);
+  setInfo("Just click to add pieces - or load an example below");
 
+  _addListeners();
+
+  // two UI modes: Gallery and Canvas
+  setUIModeCanvas();
+  
+  if (isMobileDevice()) {
+    inputMode = 'touch';
+    setWarning("⚠️ Jengax is optimized for desktop.");
+  }
+  console.log(`${inputMode} mode`);
+
+}     
+
+function _addListeners() {
+  
     buttonLogin.addEventListener("click", async (e) => {
       try {
         await login();
@@ -72,7 +79,7 @@ export function initUI() {
 
     buttonCanvas.addEventListener("click", (e) => {
       posthog.capture('button_canvas');  // hide gallery
-      clearMessage();
+      clearMessages();
       setUIModeCanvas();  
     });
 
@@ -105,7 +112,7 @@ export function initUI() {
     });
     buttonClear.addEventListener("click", (e) => {    
     posthog.capture('button_clear');
-     clearMessage();
+     clearMessages();
      clearCanvas();
     });    
     buttonUndo.addEventListener("click", (e) => {    
@@ -126,23 +133,7 @@ export function initUI() {
       posthog.capture('button_example3');
     });
 
-   // prevent moving screen in touch 
-   //  canvas.addEventListener('touchmove', touchMoved, { passive: false });
-
-  if (isMobileDevice()) {
-    setWarning("⚠️ Jengax is optimized for desktop.");
-    /*
-      position: fixed;
-      bottom: 0;
-      left: 0;
-      right: 0;
-    */
-    //document.body.appendChild(warning);
-    
-    textWarningMobile.classList.remove("hidden");
-  }
-
-}     
+}
 
 // ---- Menu states --------------
 export function setUIModeGallery() {
@@ -325,7 +316,7 @@ function setInfo(txt) {
     `;
 }
 
-function clearMessage() {
+function clearMessages() {
   textInfoMessage.innerHTML = "";
       textInfoMessage.style.cssText = `
       background: #fff;
