@@ -139,7 +139,8 @@ export function handleZoom(event) {
   const zoomFactor = event.deltaY < 0 ? 1.03 : 0.97;
 
   // 3) apply it around the mouse cursor
-  zoomAt(event.clientX, event.clientY, zoomFactor);
+  //zoomAt(event.clientX, event.clientY, zoomFactor);  can not use event coordinates
+  zoomAt(mouseX, mouseY, zoomFactor);
  
   // 4) redraw the sketch
   redraw();
