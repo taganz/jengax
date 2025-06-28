@@ -26,7 +26,8 @@ Users can place vertical and horizontal rectangular pieces based on specific sup
 
 ## I/O
 
-- Log in to **View public Gallery**. You can **Publish** your sketch or **load** a published sketch
+- **View public Gallery** to **load** a published sketch
+- Login to **Publish** your sketch on the gallery
 - **Save to file** or "S" to save the current drawing to a JSON file
 - **Load to file** or "L" to load a drawing from a JSON file
 
