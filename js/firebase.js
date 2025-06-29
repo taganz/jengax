@@ -29,9 +29,9 @@ export async function saveSketch() {
     if (!cnv || !cnv.elt) { 
         throw new Error("El canvas de p5 aún no está inicializado");
       }
-    const sketchName = prompt("Nombre del sketch:");
-    if (!sketchName) {
-      console.log("Publish cancel.led");
+    const sketchName = prompt("Sketch name:");
+    if (sketchName==null) {
+      console.log("Publish cancelled");
       return null;
     }
     const sketchData  = {
@@ -58,12 +58,12 @@ export async function saveSketch() {
     // Guardamos el documento
     const docRef = await addDoc(collRef, sketchData);
 
-    console.log("✅ Sketch guardado con ID:", docRef.id);
-    alert("Sketch guardado correctamente");
+    console.log("✅ Sketch published with ID:", docRef.id);
+    alert("The sketch was published successfully.");
     return docRef.id;
   } catch (error) {
-      console.error("❌ Error al guardar el sketch:", error);
-      alert("Error al guardar el sketch");
+      console.error("❌ Error publishing sketch:", error);
+      alert("There was an error publishing the sketch.");
     throw error;
   }
 }
