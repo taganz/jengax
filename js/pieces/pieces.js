@@ -63,7 +63,6 @@ export function doPiece(wx, wy) {
         last_wy = wy;
         lastCandidateId = 0;
         pieces.push(candidates[lastCandidateId]);
-        console.log(candidates[lastCandidateId]);
         if (!initialState==null) initialState = false;        
       }
   }
