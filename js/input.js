@@ -7,7 +7,7 @@ import { screenToWorldX, screenToWorldY } from './camera.js';
 import { logCursorPosition } from './utils.js';
 import { setDrawModeHand, setDrawModeSolid, toogleAutoDraw } from './rendering.js';
 import { inputMode } from './ui.js';
-
+import { doRandomPiece, resetRandomPiece } from './pieces/randomPiece.js';
 let isDragging = false;
 let lastMouseX = 0;
 let lastMouseY = 0;
@@ -54,11 +54,11 @@ export function mousePressed() {
 }
 
 
-let lastAutoPos = null;
-let autoPlaceDist = 5*piece_width; // distancia mínima entre piezas
 
 export function mouseDragged() {
   if (inputMode == 'touch') return;
+
+  // drag fa dues coses: drag del canvas o tirar peces aleatories
   if (isDragging) {
     pan(mouseX - lastMouseX, mouseY - lastMouseY);
     lastMouseX = mouseX;  
@@ -71,28 +71,14 @@ export function mouseDragged() {
         wx = Math.round(wx / piece_width) * piece_width;
         wy = Math.round(wy / piece_width) * piece_width;
       }
-      // Si es la primera vez o se ha movido suficiente distancia
-      if (
-        !lastAutoPos ||
-        dist(wx, wy, lastAutoPos.x, lastAutoPos.y) >= autoPlaceDist
-      ) {
-        // Guardamos punto para el siguiente trigger
-        lastAutoPos = { x: wx, y: wy };
-
-        // Lógica de colocación (puede ser tu placeVerticalPiece o la general)
-        doPiece(wx, wy);
-        redraw();
-
-        autoPlaceDist = piece_width * Math.floor(-3, 8);
-
-      }
-    }       
+      doRandomPiece(wx, wy);
+    }      
   }
 
 export function mouseReleased() {
  if (inputMode == 'touch') return;
   isDragging = false;
-  lastAutoPos = null;
+  resetRandomPiece();
 
 }
 
