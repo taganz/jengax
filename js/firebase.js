@@ -29,12 +29,16 @@ export async function saveSketch() {
     if (!cnv || !cnv.elt) { 
         throw new Error("El canvas de p5 aún no está inicializado");
       }
-    
+    const sketchName = prompt("Nombre del sketch:");
+    if (!sketchName) {
+      console.log("Publish cancel.led");
+      return null;
+    }
     const sketchData  = {
       pieces : pieces, 
       user : currentUser ? currentUser.uid : null,
       userDisplayName : currentUser ? currentUser.displayName : null,
-      sketchName : prompt("Nombre del sketch:"),
+      sketchName : sketchName,
       //sketchImage : cnv.elt.toDataURL("image/png"), // Captura la imagen del canvas
       sketchImage : getScaledImagePNG(300),
       sketchDate : new Date().toLocaleDateString(),
