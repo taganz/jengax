@@ -4,7 +4,6 @@
 import { screenToWorldX, screenToWorldY } from './camera.js';
 import { piece_width, doPiece } from './pieces/pieces.js';
 import { inputMode } from './ui.js';
-import { snapToGrid } from './main.js';
 
 let isDragging = false;
 let lastTouches = [];
@@ -40,10 +39,6 @@ if (!mouseIsInsideCanvas()) return;  // ignore clicks off-canvas
 
   let wx = screenToWorldX(mouseX);
   let wy = screenToWorldY(mouseY);
-  if (snapToGrid) {
-      wx = Math.round(wx / piece_width) * piece_width;
-      wy = Math.round(wy / piece_width) * piece_width;
-  }
   if (touches.length === 0 && longPressDetected) {
       // long tap
   }

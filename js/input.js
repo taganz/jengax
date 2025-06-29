@@ -2,7 +2,6 @@
 import { piece_width, undoPiece, doPiece } from './pieces/pieces.js';
 import { zoomAt, pan } from './camera.js';
 import { handleSave, handleLoad } from './io.js';
-import { snapToGrid } from './main.js';
 import { screenToWorldX, screenToWorldY } from './camera.js';
 import { logCursorPosition } from './utils.js';
 import { setDrawModeHand, setDrawModeSolid, toogleAutoDraw } from './rendering.js';
@@ -36,10 +35,7 @@ export function mousePressed() {
 
   let wx = screenToWorldX(mouseX);
   let wy = screenToWorldY(mouseY);
-  if (snapToGrid) {
-    wx = Math.round(wx / piece_width) * piece_width;
-    wy = Math.round(wy / piece_width) * piece_width;
-  }
+
   // borrar piezas
   if (mouseButton === RIGHT) {
     undoPiece();
@@ -67,10 +63,6 @@ export function mouseDragged() {
   } else  {
       let wx = screenToWorldX(mouseX);
       let wy = screenToWorldY(mouseY);
-      if (snapToGrid) {
-        wx = Math.round(wx / piece_width) * piece_width;
-        wy = Math.round(wy / piece_width) * piece_width;
-      }
       doRandomPiece(wx, wy);
     }      
   }

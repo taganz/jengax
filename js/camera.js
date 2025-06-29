@@ -1,4 +1,10 @@
+
 // camera.js
+
+import { piece_width } from "./pieces/pieces.js";
+
+export const snapToGrid = true;
+
 export let viewScale;
 export let viewOffsetX;
 export let viewOffsetY;
@@ -16,10 +22,18 @@ export function setCamera(scale, offsetX, offsetY) {
   viewOffsetY = offsetY;
 } 
 export function screenToWorldX(sx) {
-  return (sx - viewOffsetX) / viewScale;
+  let wx = (sx - viewOffsetX) / viewScale;
+   if (snapToGrid) {
+      wx = Math.round(wx / piece_width) * piece_width;
+    }
+  return wx;
 }
 export function screenToWorldY(sy) {
-  return (height + viewOffsetY - sy) / viewScale;
+  let wy = (height + viewOffsetY - sy) / viewScale;
+  if (snapToGrid) {
+    wy = Math.round(wy / piece_width) * piece_width;
+  }
+  return wy;
 }
 
 export function worldToScreenX(wx) {

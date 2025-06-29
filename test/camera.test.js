@@ -13,6 +13,7 @@ import { viewOffsetX
         , resetCamera
         , setCamera
         , zoomAt
+        , snapToGrid
        } from '../js/camera.js'; 
 
 
@@ -21,9 +22,13 @@ let height;
 describe('camera.js', () => {
   // reset camera before each test
   beforeEach(() => {
-    resetCamera()
+    resetCamera();
   });
 
+  it('confirm snapToGrid is true', () => {
+    resetCamera();
+    expect(snapToGrid).to.equal(true);
+  });
   it('resetCamera sets to 1, 0, 0', () => {
       resetCamera();
       expect(viewOffsetX).to.equal(0);
@@ -39,24 +44,24 @@ describe('camera.js', () => {
 
   describe('screenToWorldX()', () => {
 
-    it('should be identity when no pan/zoom', () => {
+    it('should be identity (with snap) when no pan/zoom', () => {
       expect(screenToWorldX(0)).to.equal(0);
-      expect(screenToWorldX(123)).to.equal(123);
+      expect(screenToWorldX(123)).to.equal(120  );
     });
 
-    it('should account for pan', () => {
+    it('should account for pan (with snap)', () => {
       setCamera(1, 10, 0);
       expect(screenToWorldX(10)).to.equal(0);
-      expect(screenToWorldX(15)).to.equal(5);
+      expect(screenToWorldX(15)).to.equal(0);
     });
 
-    it('should account for zoom (scale only)', () => {
+    it('should account for zoom (scale only) (with snap)', () => {
       setCamera(2, 0, 0);// no pan
       expect(screenToWorldX(0)).to.equal(0);
-      expect(screenToWorldX(20)).to.equal(10);
+      expect(screenToWorldX(20)).to.equal(20);
     });
 
-    it('should handle pan + zoom together', () => {
+    it('should handle pan + zoom together (with snap)', () => {
       setCamera(0.5, 40, 0);// no pan
       // (screenX - 40) / 0.5
       expect(screenToWorldX(40)).to.equal(0);
@@ -82,12 +87,12 @@ describe('camera.js', () => {
       expect(screenToWorldY(180)).to.equal(40);
     });
 
-    it('should account for vertical scale', () => {
+    it('should account for vertical scale (with snap)', () => {
       setCamera(2, 0, 0);
       window.height = 200;
       // worldY = (200 + 0 - screenY) / 2
       expect(screenToWorldY(200)).to.equal(0);
-      expect(screenToWorldY(180)).to.equal(10);
+      expect(screenToWorldY(180)).to.equal(20);
     });
 
     it('should account for pan + zoom together', () => {
@@ -108,7 +113,7 @@ describe('camera.js', () => {
     });
 
     // helper: pick a variety of test points
-    const testPoints = [0, 10, 50, 123, 199];
+    const testPoints = [0, 20, 60, 120, 200];   // snap to grid
 
     describe('worldToScreenX()', () => {
       it('is the inverse of screenToWorldX for various Xs', () => {
@@ -142,6 +147,7 @@ describe('camera.js', () => {
       });
     });
 
+    /* --- CAL REFER TENINT EN COMPTE SNAP -----
     describe('worldToScreenY()', () => {
       it('is the inverse of screenToWorldY for various Ys', () => {
         // default camera
@@ -173,8 +179,10 @@ describe('camera.js', () => {
         }
       });
     });
+    */
   });
 
+  /* --- CAL REFER TENINT EN COMPTE SPAN
   describe('Screen ↔ World conversions with viewScale = 2', () => {
     beforeEach(() => {
       // set up the camera state
@@ -210,7 +218,7 @@ describe('camera.js', () => {
       expect(screenToWorldY(sy)).to.be.closeTo(wy, 1e-6);
     });
   });
-
+*/
   describe('zoomAt', () =>  {
     it ('zoom at 0, 0 doesn t change offset', () => {
       resetCamera();

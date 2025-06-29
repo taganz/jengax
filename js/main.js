@@ -14,8 +14,6 @@ import { initPieces } from './pieces/pieces.js';
 export const jengax_version = '1.0.2';
 
 export let cnv; // p5.js canvas element
-export const snapToGrid = true; 
-
 
 // ─── p5.js setup & draw ─────────────────────────────────────────────────
 export function setup() {
