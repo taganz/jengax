@@ -7,6 +7,8 @@ import { logCursorPosition } from './utils.js';
 import { setDrawModeHand, setDrawModeSolid, toogleAutoDraw } from './rendering.js';
 import { inputMode } from './ui.js';
 import { doRandomPiece, resetRandomPiece } from './pieces/randomPiece.js';
+import { resizeCanvasIfFull } from './rendering.js';
+
 let isDragging = false;
 let lastMouseX = 0;
 let lastMouseY = 0;
@@ -45,6 +47,7 @@ export function mousePressed() {
 
   
   doPiece(wx, wy);
+  resizeCanvasIfFull();
   redraw();
   return false;
 }
@@ -64,6 +67,7 @@ export function mouseDragged() {
       let wx = screenToWorldX(mouseX);
       let wy = screenToWorldY(mouseY);
       doRandomPiece(wx, wy);
+      resizeCanvasIfFull();
     }      
   }
 

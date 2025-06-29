@@ -1,6 +1,6 @@
 import { pieces, clearPieces, getWorldXBounds, getCandidates,
   piece_border, piece_sizes, piece_width, divideVerticalPieces,
-  existHorizontal
+  existHorizontal, lastPiece
 } from '../../js/pieces/pieces.js';
 
 describe('pieces', function () {
@@ -8,6 +8,7 @@ describe('pieces', function () {
     clearPieces(); 
   });
 
+  
   it ('constants used in test not changed', function() {
 
     chai.expect(piece_width).to.equal(20);
@@ -16,6 +17,15 @@ describe('pieces', function () {
     
   });
 
+  it ('lastPiece return last added piece', function() {
+
+    let vert1 = { x: 100, y: 30, width: 20, height: 60, horizontal: false};
+    let vert2 = { x: 200, y: 30, width: 20, height: 60, horizontal: false };
+    pieces.push(vert1);
+    pieces.push(vert2);
+    chai.expect(lastPiece()).to.deep.equal(vert2);
+    
+  });
   it('getWorldXBounds() devuelve valores correctos', function () {
     pieces.push({ x: 100, y: 300, width: 20, height: 60, horizontal: false });
     pieces.push({ x: 100, y: 200, width: 20, height: 60, horizontal: false });

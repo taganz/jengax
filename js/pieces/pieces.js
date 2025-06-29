@@ -85,6 +85,10 @@ export function piecesIsEmpty() {
   return initialState || pieces.length == 0;
 }
 
+export function lastPiece() {
+  return pieces[pieces.length - 1];
+}
+
 export function clearPieces() {
   pieces.splice(0, pieces.length);  
 }

@@ -1,9 +1,10 @@
 // mobile.js
 // Mobile-friendly input: tap to place, long press to delete, pinch-to-zoom, two-finger pan
 
-import { screenToWorldX, screenToWorldY } from './camera.js';
-import { piece_width, doPiece } from './pieces/pieces.js';
+import { screenToWorldX, screenToWorldY, worldToScreenX, worldToScreenY, zoomAt } from './camera.js';
+import { piece_width, doPiece, lastPiece } from './pieces/pieces.js';
 import { inputMode } from './ui.js';
+import { resizeCanvasIfFull } from './rendering.js';
 
 let isDragging = false;
 let lastTouches = [];
@@ -45,6 +46,7 @@ if (!mouseIsInsideCanvas()) return;  // ignore clicks off-canvas
   else {    
 
     doPiece(wx, wy);
+    resizeCanvasIfFull();
   }
   redraw();
 
@@ -52,6 +54,7 @@ if (!mouseIsInsideCanvas()) return;  // ignore clicks off-canvas
   longPressDetected = false;
   return false;
 }
+
 
 /*
 // --> doesn't work!!

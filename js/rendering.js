@@ -1,8 +1,8 @@
 // rendering.js
-import { pieces, piece_width, piece_border, getWorldXBounds, clearPieces } from './pieces/pieces.js';
+import { pieces, lastPiece, piece_width, piece_border, getWorldXBounds, clearPieces } from './pieces/pieces.js';
 import { qHeld } from './input.js';
 import { resetCamera, screenToWorldX, screenToWorldY, worldToScreenX, worldToScreenY } from './camera.js';
-import { viewScale, viewOffsetX, viewOffsetY } from './camera.js';
+import { viewScale, viewOffsetX, viewOffsetY, zoomAt } from './camera.js';
 
 let ground_border  = 1;
 
@@ -190,6 +190,13 @@ export function getScaledImagePNG(maxSize) {
   return tempCanvas.toDataURL('image/png');
 }
 
+export function resizeCanvasIfFull() {
+  let lp = lastPiece();
+  let top = lp.y + lp.height/2;
+  if (worldToScreenY(top) < height * 0.2) {
+    zoomAt(worldToScreenX(lp.x), worldToScreenY(top), 0.95);
+  }
+}
 
 
 function debug_drawTestLinesBeforeTransform() {
