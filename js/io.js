@@ -1,5 +1,5 @@
 // io.js
-import { pieces, loadPieces } from './pieces/pieces.js';
+import { pieces, loadPieces, piecesIsEmpty } from './pieces/pieces.js';
 import { viewScale, viewOffsetX, viewOffsetY, setCamera } from './camera.js';
 //import { fileInput } from './main.js';
 
@@ -46,10 +46,12 @@ export function handleLoad() {
 
 export function handleFile(file) {
   if (file.subtype !== 'json') return;
-  if (!confirm('Do you want to replace the current drawing?')) {
-    // Si cancela, limpiar el input para poder recargar el mismo fichero luego
-    fileInput.elt.value = null;
-    return;
+  if (!piecesIsEmpty()) {
+    if (!confirm('Do you want to replace the current drawing?')) {
+      // Si cancela, limpiar el input para poder recargar el mismo fichero luego
+      fileInput.elt.value = null;
+      return;
+    }
   }
   const data = file.data;
   resizeCanvas(data.canvasWidth, data.canvasHeight);
