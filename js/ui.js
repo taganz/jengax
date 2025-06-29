@@ -30,7 +30,7 @@ const exampleImg3 = document.getElementById('example3');
 
 export function initUI() {
 
-  setInfo("Just click to add pieces - or load an example below");
+  setHighligh("Just click to add pieces - or load an example below");
 
   _addListeners();
 
@@ -63,7 +63,7 @@ function _addListeners() {
       //e.preventDefault();  // -->???
       posthog.capture('button_animate');
       if (piecesIsEmpty()) {
-        setInfo ("Nothing to animate yet!. Draw something first");
+        setWarning ("Nothing to animate yet!. Draw something first");
       } else {
         toogleAutoDraw();
         redraw();
@@ -301,6 +301,19 @@ export async function renderGallery() {
     itemDiv.appendChild(btnWrap);
     gallery.appendChild(itemDiv);
   });
+}
+
+function setHighligh(txt) {
+  textInfoMessage.innerHTML = txt;
+      textInfoMessage.style.cssText = `
+      background: #aff;
+      color: #000;
+      padding: 12px;
+      text-align: center;
+      font-family: sans-serif;
+      font-size: 14px;
+      z-index: 1000;
+    `;
 }
 
 function setInfo(txt) {

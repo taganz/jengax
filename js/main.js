@@ -9,6 +9,7 @@ import { initUI } from './ui.js';
 import { touchEnded, touchStarted } from './inputMobile.js';
 import { posthogInitUser } from './posthog.js';
 import { resetCamera } from './camera.js';
+import { initPieces } from './pieces/pieces.js';
 
 export const jengax_version = '1.0.2';
 
@@ -20,6 +21,7 @@ export const snapToGrid = true;
 export function setup() {
 
   createCanvasAdaptedToWindow();
+  initPieces();
   noLoop();
 
   initUI();

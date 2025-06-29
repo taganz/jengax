@@ -1,6 +1,7 @@
 
 
 // pieces.js
+import { screenToWorldX, screenToWorldY} from '../camera.js';
 import { getMinSizeToCover } from '../utils.js';
 import { getHorizontalPiece } from './getHorizontalPiece.js';
 
@@ -17,13 +18,22 @@ let last_wx = null;
 let last_wy = null;
 
 
+let initialState = null;
 
 
+export function initPieces() {
+  let wx1 = screenToWorldX(width*0.40);
+  let wx2 = screenToWorldX(width*0.60);
+  let wy  = screenToWorldY(height*0.7);
+  doPiece(wx1, wy);
+  doPiece(wx2, wy);
+  initialState = true;
+}
 
 export function doPiece(wx, wy) {
 
   // si fem clic al mateix lloc es que volem provar un altre candidat
-  if (pieces.length > 0 && (last_wx == wx && last_wy== wy ) ) {  
+  if (initialState = true && (last_wx == wx && last_wy== wy ) ) {  
     _removeLastPiece();
     if (++lastCandidateId < candidates.length) { 
       // prova un altre candidat
@@ -53,7 +63,9 @@ export function doPiece(wx, wy) {
         last_wy = wy;
         lastCandidateId = 0;
         pieces.push(candidates[lastCandidateId]);
-    }
+        console.log(candidates[lastCandidateId]);
+        if (!initialState==null) initialState = false;        
+      }
   }
 
   //lastDeletedPiece = null;
@@ -71,7 +83,7 @@ export function undoPiece() {
 }
 
 export function piecesIsEmpty() {
-  return pieces.length == 0;
+  return initialState || pieces.length == 0;
 }
 
 export function clearPieces() {
