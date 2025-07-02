@@ -16,6 +16,7 @@ let lastCandidateId = null;
 let candidates = [];
 let last_wx = null;
 let last_wy = null;
+let countAddPieces = 0;
 
 
 let initialState = null;
@@ -57,6 +58,13 @@ export function doPiece(wx, wy) {
     if (!deletedPiece) {
         // vamos a buscar candidatos y a añadir el primero
         posthog.capture('input_add');   
+        countAddPieces++;
+        if (countAddPieces == 1) { posthog.capture('input_add_1');} 
+        if (countAddPieces == 10) { posthog.capture('input_add_10');} 
+        if (countAddPieces == 50) { posthog.capture('input_add_50');} 
+        if (countAddPieces == 100) { posthog.capture('input_add_100');} 
+        if (countAddPieces == 500) { posthog.capture('input_add_500');} 
+        if (countAddPieces == 1000) { posthog.capture('input_add_1000');} 
 
         candidates = getCandidates(wx, wy);
         last_wx = wx;
